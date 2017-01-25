@@ -1,0 +1,9 @@
+namespace=Exception
+
+DOMCoreException
+FileException
+SQLException
+SVGException
+XMLHttpRequestException
+XPathException
+
