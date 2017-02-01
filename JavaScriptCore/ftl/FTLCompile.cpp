@@ -48,6 +48,8 @@
 #include "LinkBuffer.h"
 #include "ScratchRegisterAllocator.h"
 
+#include <iostream>
+
 namespace JSC { namespace FTL {
 
 using namespace DFG;

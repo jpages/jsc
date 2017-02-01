@@ -501,7 +501,7 @@ private:
         m_node = m_highBlock->at(nodeIndex);
         m_origin = m_node->origin;
 #if FTL_USES_B3
-        m_out.setOrigin(m_node);
+        m_out.setOrigin(m_node);e
 #endif
 
         if (verboseCompilationEnabled())
@@ -2655,20 +2655,24 @@ private:
             m_out.aboveOrEqual(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
     }
 
+    // An array read
     void compileGetByVal()
     {
+    	std::cout << "CompileGetByVal, type du tableau " << m_node->arrayMode().type() << std::endl;
         switch (m_node->arrayMode().type()) {
+        // The JIT inferred the array is an integer one
         case Array::Int32:
         case Array::Contiguous: {
             LValue index = lowInt32(m_node->child2());
             LValue storage = lowStorage(m_node->child3());
 
-            std::cout << "Get dans un tableau d'entier, index = " << index << ", storage " << storage << std::endl;
-
             IndexedAbstractHeap& heap = m_node->arrayMode().type() == Array::Int32 ?
                 m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
 
+            // The accessed value is in the array, no need to reallocate
             if (m_node->arrayMode().isInBounds()) {
+
+            	// Generate a inttoptr instruction to make the load
                 LValue result = m_out.load64(baseIndex(heap, storage, index, m_node->child2()));
                 LValue isHole = m_out.isZero64(result);
                 if (m_node->arrayMode().isSaneChain()) {
@@ -2682,6 +2686,7 @@ private:
                 return;
             }
 
+            // The value is not in bounds, reallocate the array to put it
             LValue base = lowCell(m_node->child1());
 
             LBasicBlock fastCase = FTL_NEW_BLOCK(m_out, ("GetByVal int/contiguous fast case"));
@@ -2977,6 +2982,7 @@ private:
         Edge child4 = m_graph.varArgChild(m_node, 3);
         Edge child5 = m_graph.varArgChild(m_node, 4);
 
+        std::cout << " on passe ici CompilePutByVal, type du tableau " << m_node->arrayMode().type() << std::endl;
         switch (m_node->arrayMode().type()) {
         case Array::Generic: {
             V_JITOperation_EJJJ operation;
@@ -3010,6 +3016,7 @@ private:
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous: {
+
             LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("PutByVal continuation"));
             LBasicBlock outerLastNext = m_out.appendTo(m_out.m_block, continuation);
 
@@ -4370,7 +4377,6 @@ private:
     {
         LValue base = lowCell(m_node->child1());
         LValue value = lowJSValue(m_node->child2());
-
         MultiPutByOffsetData& data = m_node->multiPutByOffsetData();
 
         Vector<LBasicBlock, 2> blocks(data.variants.size());
