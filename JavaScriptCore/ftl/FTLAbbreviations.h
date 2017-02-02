@@ -248,6 +248,10 @@ static inline LValue buildICmp(LBuilder builder, LIntPredicate cond, LValue left
 static inline LValue buildFCmp(LBuilder builder, LRealPredicate cond, LValue left, LValue right) { return llvm->BuildFCmp(builder, cond, left, right, ""); }
 static inline LValue buildInsertElement(LBuilder builder, LValue vector, LValue element, LValue index) { return llvm->BuildInsertElement(builder, vector, element, index, ""); }
 
+// Generate a GetElementPtr to access an array
+static inline LValue buildGEP(LBuilder builder, LLVMValueRef Pointer, LLVMValueRef *Indices, unsigned NumIndices) { return llvm->BuildGEP(builder, Pointer, Indices, NumIndices, ""); }
+
+
 static inline LValue buildFence(LBuilder builder, LAtomicOrdering ordering, SynchronizationScope scope = CrossThread)
 {
     return llvm->BuildFence(builder, ordering, scope == SingleThread, "");

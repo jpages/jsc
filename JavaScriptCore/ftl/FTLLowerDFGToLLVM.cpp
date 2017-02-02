@@ -501,7 +501,7 @@ private:
         m_node = m_highBlock->at(nodeIndex);
         m_origin = m_node->origin;
 #if FTL_USES_B3
-        m_out.setOrigin(m_node);e
+        m_out.setOrigin(m_node);
 #endif
 
         if (verboseCompilationEnabled())

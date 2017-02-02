@@ -41,6 +41,10 @@ struct LLVMAPI {
     
     // Functions that we add conditionally.
     void (*AddLowerSwitchPass)(LLVMPassManagerRef PM);
+
+    LLVMValueRef BuildGEP(LLVMBuilderRef B, LLVMValueRef Pointer,
+                              LLVMValueRef *Indices, unsigned NumIndices,
+                              const char *Name);
 };
 
 extern LLVMAPI* llvm;
