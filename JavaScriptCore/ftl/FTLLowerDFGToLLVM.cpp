@@ -2673,7 +2673,9 @@ private:
             if (m_node->arrayMode().isInBounds()) {
 
             	// Generate a inttoptr instruction to make the load
-                LValue result = m_out.load64(baseIndex(heap, storage, index, m_node->child2()));
+//                LValue result = m_out.load64(baseIndex(heap, storage, index, m_node->child2()));
+                LValue result = m_out.load64Array(baseIndex(heap, storage, index, m_node->child2()));
+
                 LValue isHole = m_out.isZero64(result);
                 if (m_node->arrayMode().isSaneChain()) {
                     DFG_ASSERT(
@@ -2686,7 +2688,7 @@ private:
                 return;
             }
 
-            // The value is not in bounds, reallocate the array to put it
+            // The value is not in bounds, reallocate the array to get it
             LValue base = lowCell(m_node->child1());
 
             LBasicBlock fastCase = FTL_NEW_BLOCK(m_out, ("GetByVal int/contiguous fast case"));

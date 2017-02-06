@@ -107,7 +107,7 @@
     macro(LLVMValueRef, BuildAlloca, (LLVMBuilderRef, LLVMTypeRef Ty, const char *Name)) \
     macro(LLVMValueRef, BuildLoad, (LLVMBuilderRef, LLVMValueRef PointerVal, const char *Name)) \
     macro(LLVMValueRef, BuildStore, (LLVMBuilderRef, LLVMValueRef Val, LLVMValueRef Ptr)) \
-    macro(LLVMValueRef, BuildZExt, (LLVMBuilderRef, LLVMValueRef Val, LLVMTypeRef DestTy, const char *Name)) \
+	macro(LLVMValueRef, BuildZExt, (LLVMBuilderRef, LLVMValueRef Val, LLVMTypeRef DestTy, const char *Name)) \
     macro(LLVMValueRef, BuildSExt, (LLVMBuilderRef, LLVMValueRef Val, LLVMTypeRef DestTy, const char *Name)) \
     macro(LLVMValueRef, BuildFPToUI, (LLVMBuilderRef, LLVMValueRef Val, LLVMTypeRef DestTy, const char *Name)) \
     macro(LLVMValueRef, BuildFPToSI, (LLVMBuilderRef, LLVMValueRef Val, LLVMTypeRef DestTy, const char *Name)) \

@@ -249,7 +249,7 @@ static inline LValue buildFCmp(LBuilder builder, LRealPredicate cond, LValue lef
 static inline LValue buildInsertElement(LBuilder builder, LValue vector, LValue element, LValue index) { return llvm->BuildInsertElement(builder, vector, element, index, ""); }
 
 // Generate a GetElementPtr to access an array
-static inline LValue buildGEP(LBuilder builder, LLVMValueRef Pointer, LLVMValueRef *Indices, unsigned NumIndices) { return llvm->BuildGEP(builder, Pointer, Indices, NumIndices, ""); }
+static inline LValue buildGEP(LBuilder builder, LValue Pointer, LValue *Indices, unsigned NumIndices) { return llvm->BuildGEP(builder, Pointer, Indices, NumIndices, ""); }
 
 
 static inline LValue buildFence(LBuilder builder, LAtomicOrdering ordering, SynchronizationScope scope = CrossThread)
@@ -306,6 +306,8 @@ static inline void verifyModule(LModule module)
     llvm->VerifyModule(module, LLVMAbortProcessAction, &error);
     llvm->DisposeMessage(error);
 }
+
+static inline void dumpValue(LLVMValueRef value) { llvm->DumpValue(value); }
 
 #endif // !FTL_USES_B3
 

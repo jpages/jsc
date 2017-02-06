@@ -28,6 +28,8 @@
 #include "DFGCommon.h"
 #include "FTLOutput.h"
 
+#include <iostream>
+
 #if ENABLE(FTL_JIT)
 #if !FTL_USES_B3
 
@@ -90,6 +92,14 @@ LValue Output::load(TypedPointer pointer, LType refType)
 {
     LValue result = get(intToPtr(pointer.value(), refType));
     pointer.heap().decorateInstruction(result, *m_heaps);
+    return result;
+}
+
+LValue Output::loadArray(TypedPointer pointer, LType refType, LValue* indices)
+{
+	LValue result = get(intToPtr(pointer.value(), refType));
+
+	pointer.heap().decorateInstruction(result, *m_heaps);
     return result;
 }
 

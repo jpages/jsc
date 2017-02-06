@@ -132,6 +132,9 @@ extern "C" JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(
     FOR_EACH_LLVM_API_FUNCTION(LLVM_API_FUNCTION_ASSIGNMENT);
 #undef LLVM_API_FUNCTION_ASSIGNMENT
     
+    result->BuildGEP = LLVMBuildGEP;
+    result->BuildInBoundsGEP = LLVMBuildInBoundsGEP;
+
     // Handle conditionally available functions.
 #if LLVM_VERSION_MAJOR >= 4 || (LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR >= 6)
     result->AddLowerSwitchPass = LLVMAddLowerSwitchPass;

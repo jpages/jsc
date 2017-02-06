@@ -255,6 +255,14 @@ public:
     LValue load16ZeroExt32(TypedPointer);
     LValue load32(TypedPointer pointer) { return load(pointer, ref32); }
     LValue load64(TypedPointer pointer) { return load(pointer, ref64); }
+
+    // Functions related to loading in arrays
+    LValue loadArray(TypedPointer, LType refType, LValue* indices);
+    LValue load64Array(TypedPointer pointer) {
+    	LValue value = intToPtr(pointer.value(), ref64);
+    	return loadArray(pointer, ref64, &value);
+    }
+
     LValue loadPtr(TypedPointer pointer) { return load(pointer, refPtr); }
     LValue loadFloatToDouble(TypedPointer pointer) { return buildFPCast(m_builder, load(pointer, refFloat), doubleType); }
     LValue loadDouble(TypedPointer pointer) { return load(pointer, refDouble); }
