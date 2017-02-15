@@ -137,7 +137,7 @@ TypedPointer IndexedAbstractHeap::baseArray(Output& out, LValue base, LValue ind
 	LValue result = out.intToPtr(base, pointerType(arrayType(out.int64, 1000)));
 
 	// Original line
-	result = out.intToPtr(base, out.ref64);
+	//result = out.intToPtr(base, out.ref64);
 	return TypedPointer(atAnyIndex(), result);
 }
 

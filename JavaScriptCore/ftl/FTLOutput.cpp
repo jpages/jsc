@@ -102,16 +102,16 @@ LValue Output::loadArray(TypedPointer baseArray, IndexedAbstractHeap& heap, LVal
 
 	LValue indices[2];
 	indices[0] = constInt32(0);
-	indices[1] = index;
+	indices[1] = constInt32(2);
 
 	// builder, base of the array
-	std::cout << m_builder << std::endl;
+	std::cout << baseArray.value() << std::endl;
 
 	//TODO: fix this
-	buildGEP(m_builder, baseArray.value(), indices, 2);
+	result = get(buildGEP(m_builder, baseArray.value(), indices, 2));
 	std::cout << "TEST" << std::endl;
 
-	result = get(baseArray.value());
+	//result = get(baseArray.value());
 
 //	LValue result = get(baseArray.value());
 
