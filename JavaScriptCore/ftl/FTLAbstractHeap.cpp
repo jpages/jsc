@@ -131,6 +131,16 @@ TypedPointer IndexedAbstractHeap::baseIndex(Output& out, LValue base, LValue ind
     return TypedPointer(atAnyIndex(), out.addPtr(result, m_offset + offset));
 }
 
+// Get a pointer to the base of the array
+TypedPointer IndexedAbstractHeap::baseArray(Output& out, LValue base, LValue index, JSValue indexAsConstant, ptrdiff_t offset)
+{
+	LValue result = out.intToPtr(base, pointerType(arrayType(out.int64, 1000)));
+
+	// Original line
+	result = out.intToPtr(base, out.ref64);
+	return TypedPointer(atAnyIndex(), result);
+}
+
 const AbstractField& IndexedAbstractHeap::atSlow(ptrdiff_t index)
 {
     ASSERT(static_cast<size_t>(index) >= m_smallIndices.size());

@@ -307,8 +307,6 @@ static inline void verifyModule(LModule module)
     llvm->DisposeMessage(error);
 }
 
-static inline void dumpValue(LLVMValueRef value) { llvm->DumpValue(value); }
-
 #endif // !FTL_USES_B3
 
 } } // namespace JSC::FTL

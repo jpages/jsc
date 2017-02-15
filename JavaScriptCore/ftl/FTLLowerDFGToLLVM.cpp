@@ -123,13 +123,7 @@ public:
 
     void lower()
     {
-        CString name;
-        if (verboseCompilationEnabled()) {
-            name = toCString(
-                "jsBody_", ++compileCounter, "_", codeBlock()->inferredName(),
-                "_", codeBlock()->hash());
-        } else
-            name = "jsBody";
+        CString name = toCString("jsBody_", ++compileCounter, "_", codeBlock()->inferredName());
 
         m_graph.ensureDominators();
 
@@ -2666,6 +2660,7 @@ private:
             LValue index = lowInt32(m_node->child2());
             LValue storage = lowStorage(m_node->child3());
 
+            // The heap variable is the area where all arrays belong
             IndexedAbstractHeap& heap = m_node->arrayMode().type() == Array::Int32 ?
                 m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
 
@@ -2674,8 +2669,9 @@ private:
 
             	// Generate a inttoptr instruction to make the load
 //                LValue result = m_out.load64(baseIndex(heap, storage, index, m_node->child2()));
-                LValue result = m_out.load64Array(baseIndex(heap, storage, index, m_node->child2()));
+                LValue result = m_out.loadArray(basePtr(heap, storage, index, m_node->child2()), heap, index, provenValue(m_node->child2()));
 
+                // Test whether the accessed value is a hole in the array or not
                 LValue isHole = m_out.isZero64(result);
                 if (m_node->arrayMode().isSaneChain()) {
                     DFG_ASSERT(
@@ -6586,6 +6582,13 @@ private:
             m_out.load32(object, m_heaps.JSArrayBufferView_mode),
             m_out.constInt32(FastTypedArray));
     }
+
+    // Generate a pointer to the base of the array
+    TypedPointer basePtr(IndexedAbstractHeap& heap, LValue storage, LValue index, Edge edge, ptrdiff_t offset = 0)
+	{
+		return m_out.baseArray(
+			heap, storage, m_out.zeroExtPtr(index), provenValue(edge), offset);
+	}
 
     TypedPointer baseIndex(IndexedAbstractHeap& heap, LValue storage, LValue index, Edge edge, ptrdiff_t offset = 0)
     {
