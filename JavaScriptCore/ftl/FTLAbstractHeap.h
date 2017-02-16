@@ -170,7 +170,7 @@ public:
     const AbstractField& operator[](ptrdiff_t index) { return at(index); }
     
     TypedPointer baseIndex(Output& out, LValue base, LValue index, JSValue indexAsConstant = JSValue(), ptrdiff_t offset = 0);
-    TypedPointer baseArray(Output& out, LValue base, LValue index, JSValue indexAsConstant = JSValue(), ptrdiff_t offset = 0);
+    TypedPointer baseArray(Output& out, LValue base, LValue index, JSValue indexAsConstant = JSValue());
 
     void dump(PrintStream&) const;
 

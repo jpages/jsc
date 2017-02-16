@@ -96,7 +96,7 @@ LValue Output::load(TypedPointer pointer, LType refType)
 }
 
 /* baseArray points to the beginning of the array */
-LValue Output::loadArray(TypedPointer baseArray, IndexedAbstractHeap& heap, LValue index, JSValue value)
+LValue Output::loadArray(TypedPointer baseArray, LValue index, JSValue value)
 {
 	LValue result;
 
@@ -117,6 +117,20 @@ void Output::store(LValue value, TypedPointer pointer, LType refType)
         value = buildFPCast(m_builder, value, floatType);
     LValue result = set(value, intToPtr(pointer.value(), refType));
     pointer.heap().decorateInstruction(result, *m_heaps);
+}
+
+void Output::storeArray(LValue value, TypedPointer baseArray, LValue index)
+{
+	LValue result;
+
+	LValue indices[2];
+	indices[0] = constInt32(0);
+	indices[1] = index;
+
+	//Generate a GEP to do the pointer arithmetic
+	result = set(value, buildGEP(m_builder, baseArray.value(), indices, 2));
+
+	baseArray.heap().decorateInstruction(result, *m_heaps);
 }
 
 LValue Output::baseIndex(LValue base, LValue index, Scale scale, ptrdiff_t offset)

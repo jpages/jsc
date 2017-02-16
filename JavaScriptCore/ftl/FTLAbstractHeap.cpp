@@ -132,12 +132,11 @@ TypedPointer IndexedAbstractHeap::baseIndex(Output& out, LValue base, LValue ind
 }
 
 // Get a pointer to the base of the array
-TypedPointer IndexedAbstractHeap::baseArray(Output& out, LValue base, LValue index, JSValue indexAsConstant, ptrdiff_t offset)
+TypedPointer IndexedAbstractHeap::baseArray(Output& out, LValue base, LValue index, JSValue indexAsConstant)
 {
+	// The size is not checked by LLVM here
 	LValue result = out.intToPtr(base, pointerType(arrayType(out.int64, 1000)));
 
-	// Original line
-	//result = out.intToPtr(base, out.ref64);
 	return TypedPointer(atAnyIndex(), result);
 }
 

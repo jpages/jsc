@@ -2666,7 +2666,7 @@ private:
             // The accessed value is in the array, no need to reallocate
             if (m_node->arrayMode().isInBounds()) {
 
-                LValue result = m_out.loadArray(basePtr(heap, storage, index, m_node->child2()), heap, index, provenValue(m_node->child2()));
+                LValue result = m_out.loadArray(basePtr(heap, storage, index, m_node->child2()), index, provenValue(m_node->child2()));
 
                 // Test whether the accessed value is a hole in the array or not
                 LValue isHole = m_out.isZero64(result);
@@ -2977,7 +2977,6 @@ private:
         Edge child4 = m_graph.varArgChild(m_node, 3);
         Edge child5 = m_graph.varArgChild(m_node, 4);
 
-        std::cout << " on passe ici CompilePutByVal, type du tableau " << m_node->arrayMode().type() << std::endl;
         switch (m_node->arrayMode().type()) {
         case Array::Generic: {
             V_JITOperation_EJJJ operation;
@@ -3023,13 +3022,12 @@ private:
                 if (m_node->arrayMode().type() == Array::Int32)
                     FTL_TYPE_CHECK(jsValueValue(value), child3, SpecInt32, isNotInt32(value));
 
-                TypedPointer elementPointer = m_out.baseIndex(
-                    m_node->arrayMode().type() == Array::Int32 ?
-                    m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties,
-                    storage, m_out.zeroExtPtr(index), provenValue(child2));
+                IndexedAbstractHeap& heap = m_node->arrayMode().type() == Array::Int32 ?
+                        m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
 
+                TypedPointer baseArray = m_out.baseArray(heap, storage, m_out.zeroExtPtr(index), provenValue(child2));
                 if (m_node->op() == PutByValAlias) {
-                    m_out.store64(value, elementPointer);
+                    m_out.storeArray(value, baseArray, index);
                     break;
                 }
 
@@ -3039,7 +3037,7 @@ private:
                     : operationPutByValBeyondArrayBoundsNonStrict,
                     base, storage, index, value, continuation);
 
-                m_out.store64(value, elementPointer);
+                m_out.storeArray(value, baseArray, index);
                 break;
             }
 

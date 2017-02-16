@@ -257,7 +257,7 @@ public:
     LValue load64(TypedPointer pointer) { return load(pointer, ref64); }
 
     // Functions related to loading in arrays
-    LValue loadArray(TypedPointer pointer, IndexedAbstractHeap& heap, LValue index, JSValue value);
+    LValue loadArray(TypedPointer pointer, LValue index, JSValue value);
 
     LValue loadPtr(TypedPointer pointer) { return load(pointer, refPtr); }
     LValue loadFloatToDouble(TypedPointer pointer) { return buildFPCast(m_builder, load(pointer, refFloat), doubleType); }
@@ -267,6 +267,8 @@ public:
     void store64(LValue value, TypedPointer pointer) { store(value, pointer, ref64); }
     void storePtr(LValue value, TypedPointer pointer) { store(value, pointer, refPtr); }
     void storeDouble(LValue value, TypedPointer pointer) { store(value, pointer, refDouble); }
+
+    void storeArray(LValue value, TypedPointer pointer, LValue index);
 
     LValue addPtr(LValue value, ptrdiff_t immediate = 0)
     {
@@ -303,7 +305,7 @@ public:
     // Generate a pointer to the base of the array
     TypedPointer baseArray(IndexedAbstractHeap& heap, LValue base, LValue index, JSValue indexAsConstant = JSValue(), ptrdiff_t offset = 0)
 	{
-		return heap.baseArray(*this, base, index, indexAsConstant, offset);
+		return heap.baseArray(*this, base, index, indexAsConstant);
 	}
 
     TypedPointer absolute(void* address)
