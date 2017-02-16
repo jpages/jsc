@@ -2,6 +2,7 @@ Makefile
 
 *.cmake
 *.gmo
+*.pyc
 
 CMakeFiles/
 

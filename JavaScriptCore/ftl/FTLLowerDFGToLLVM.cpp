@@ -2652,7 +2652,6 @@ private:
     // An array read
     void compileGetByVal()
     {
-    	std::cout << "CompileGetByVal, type du tableau " << m_node->arrayMode().type() << std::endl;
         switch (m_node->arrayMode().type()) {
         // The JIT inferred the array is an integer one
         case Array::Int32:
@@ -2667,8 +2666,6 @@ private:
             // The accessed value is in the array, no need to reallocate
             if (m_node->arrayMode().isInBounds()) {
 
-            	// Generate a inttoptr instruction to make the load
-//                LValue result = m_out.load64(baseIndex(heap, storage, index, m_node->child2()));
                 LValue result = m_out.loadArray(basePtr(heap, storage, index, m_node->child2()), heap, index, provenValue(m_node->child2()));
 
                 // Test whether the accessed value is a hole in the array or not

@@ -95,25 +95,17 @@ LValue Output::load(TypedPointer pointer, LType refType)
     return result;
 }
 
-/* pointer points to the beginning of the array */
+/* baseArray points to the beginning of the array */
 LValue Output::loadArray(TypedPointer baseArray, IndexedAbstractHeap& heap, LValue index, JSValue value)
 {
 	LValue result;
 
 	LValue indices[2];
 	indices[0] = constInt32(0);
-	indices[1] = constInt32(2);
+	indices[1] = index;
 
-	// builder, base of the array
-	std::cout << baseArray.value() << std::endl;
-
-	//TODO: fix this
+	//Generate a GEP to do the pointer arithmetic
 	result = get(buildGEP(m_builder, baseArray.value(), indices, 2));
-	std::cout << "TEST" << std::endl;
-
-	//result = get(baseArray.value());
-
-//	LValue result = get(baseArray.value());
 
 	baseArray.heap().decorateInstruction(result, *m_heaps);
     return result;
