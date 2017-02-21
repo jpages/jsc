@@ -2663,10 +2663,18 @@ private:
             IndexedAbstractHeap& heap = m_node->arrayMode().type() == Array::Int32 ?
                 m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
 
+            // Do the intoptr instruction in the current block
+          	TypedPointer pointer = basePtr(heap, storage, index, m_node->child2());
+
+            // And create a new block to do the load
+          	LBasicBlock getblock = FTL_NEW_BLOCK(m_out, ("getblock"));
+          	m_out.jump(getblock);
+        	m_out.appendTo(getblock);
+
             // The accessed value is in the array, no need to reallocate
             if (m_node->arrayMode().isInBounds()) {
 
-                LValue result = m_out.loadArray(basePtr(heap, storage, index, m_node->child2()), index, provenValue(m_node->child2()));
+                LValue result = m_out.loadArray(pointer, index, provenValue(m_node->child2()));
 
                 // Test whether the accessed value is a hole in the array or not
                 LValue isHole = m_out.isZero64(result);
