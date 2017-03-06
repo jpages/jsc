@@ -1169,7 +1169,6 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
         if (Options::llvmSimpleOpt()) {
             modulePasses = llvm->CreatePassManager();
-            llvm->AddTargetData(targetData, modulePasses);
             llvm->AddAnalysisPasses(targetMachine, modulePasses);
             llvm->AddPromoteMemoryToRegisterPass(modulePasses);
             llvm->AddGlobalOptimizerPass(modulePasses);
@@ -1199,8 +1198,6 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
             functionPasses = llvm->CreateFunctionPassManagerForModule(module);
             modulePasses = llvm->CreatePassManager();
-
-            llvm->AddTargetData(llvm->GetExecutionEngineTargetData(engine), modulePasses);
 
             llvm->PassManagerBuilderPopulateFunctionPassManager(passBuilder, functionPasses);
             llvm->PassManagerBuilderPopulateModulePassManager(passBuilder, modulePasses);
