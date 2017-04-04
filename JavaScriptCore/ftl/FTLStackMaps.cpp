@@ -112,6 +112,7 @@ void StackMaps::LiveOut::dump(PrintStream& out) const
 bool StackMaps::Record::parse(StackMaps::ParseContext& context)
 {
     int64_t id = context.view->read<int64_t>(context.offset, true);
+
     ASSERT(static_cast<int32_t>(id) == id);
     patchpointID = static_cast<uint32_t>(id);
     if (static_cast<int32_t>(patchpointID) < 0)

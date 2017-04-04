@@ -80,6 +80,7 @@ AbstractHeapRepository::AbstractHeapRepository(LContext context)
     JSCell_cellState.changeParent(&JSCell_usefulBytes);
 
 #if !FTL_USES_B3
+
     root.m_tbaaMetadata = mdNode(m_context, mdString(m_context, root.m_heapName));
     
     RELEASE_ASSERT(m_tbaaKind);

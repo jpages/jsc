@@ -145,6 +145,12 @@ static inline LValue mdNode(LContext context, LValue arg1, LValue arg2, LValue a
     return mdNode(context, args, 3);
 }
 
+static inline LValue mdNode(LContext context, LValue arg1, LValue arg2, LValue arg3, LValue arg4)
+{
+    LValue args[] = { arg1, arg2, arg3, arg4 };
+    return mdNode(context, args, 4);
+}
+
 static inline void setMetadata(LValue instruction, unsigned kind, LValue metadata) { llvm->SetMetadata(instruction, kind, metadata); }
 
 static inline LValue addFunction(LModule module, const char* name, LType type) { return llvm->AddFunction(module, name, type); }

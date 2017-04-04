@@ -41,22 +41,36 @@
 namespace JSC { namespace FTL {
 
 #if !FTL_USES_B3
-LValue AbstractHeap::tbaaMetadataSlow(const AbstractHeapRepository& repository) const
+LValue AbstractHeap::tbaaMetadataSlow(const AbstractHeapRepository& repository, const Output* out) const
 {
-    m_tbaaMetadata = mdNode(
-        repository.m_context,
-        mdString(repository.m_context, m_heapName),
-        m_parent->tbaaMetadata(repository));
-    return m_tbaaMetadata;
+//	m_tbaaMetadata = mdNode(
+//        repository.m_context,
+//        mdString(repository.m_context, m_heapName),
+//        m_parent->tbaaMetadata(repository));
+
+	LValue typeMD = mdNode(
+			repository.m_context,
+			mdString(repository.m_context, m_heapName),
+			m_parent->tbaaMetadata(repository, out));
+
+	m_tbaaMetadata = mdNode(
+	        repository.m_context,
+			m_parent->tbaaMetadata(repository, out),
+			typeMD,
+			const_cast<Output*>(out)->constInt32(0));
+
+	return m_tbaaMetadata;
 }
 #endif
 
-void AbstractHeap::decorateInstruction(LValue instruction, const AbstractHeapRepository& repository) const
+void AbstractHeap::decorateInstruction(LValue instruction, const AbstractHeapRepository& repository, const Output* out) const
 {
 #if !FTL_USES_B3
     if (!Options::useFTLTBAA())
         return;
-    setMetadata(instruction, repository.m_tbaaKind, tbaaMetadata(repository));
+
+    setMetadata(instruction, repository.m_tbaaKind, tbaaMetadata(repository, out));
+
 #else
     UNUSED_PARAM(instruction);
     UNUSED_PARAM(repository);
