@@ -5,7 +5,6 @@ function test(pixels)
             pixels[y][x] += 666666;
         }
     }
-    print (pixels[145][479])
 }
 
 var pixels = [];
@@ -17,5 +16,6 @@ for (var y = 0; y < 5000; y++) {
         pixels[y][x] = 0;
     }
 }
-print (pixels[145][478])
+print (pixels[145][479])
 test(pixels);
+print (pixels[145][479])
