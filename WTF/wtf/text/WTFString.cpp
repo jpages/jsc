@@ -744,7 +744,13 @@ CString String::ascii() const
 
         for (unsigned i = 0; i < length; ++i) {
             LChar ch = characters[i];
-            characterBuffer[i] = ch && (ch < 0x20 || ch > 0x7f) ? '?' : ch;
+
+            // JSCPolly added test to print \n = 0X0A correctly
+            if (ch == 0x0A) {
+            	characterBuffer[i] = ch;
+            } else {
+            	characterBuffer[i] = ch && (ch < 0x20 || ch > 0x7f) ? '?' : ch;
+            }
         }
 
         return result;        
@@ -757,7 +763,12 @@ CString String::ascii() const
 
     for (unsigned i = 0; i < length; ++i) {
         UChar ch = characters[i];
-        characterBuffer[i] = ch && (ch < 0x20 || ch > 0x7f) ? '?' : ch;
+        // JSCPolly added test to print \n = 0X0A correctly
+        if (ch == 0x0A) {
+        	characterBuffer[i] = ch;
+        } else {
+        	characterBuffer[i] = ch && (ch < 0x20 || ch > 0x7f) ? '?' : ch;
+        }
     }
 
     return result;
