@@ -287,6 +287,8 @@ public:
         m_tagTypeNumber = m_out.constInt64(TagTypeNumber);
         m_tagMask = m_out.constInt64(TagMask);
 
+        uintptr_t number = (uintptr_t)codeBlock();
+        std::cout << "MANU = " << number << std::endl;
         m_out.storePtr(m_out.constIntPtr(codeBlock()), addressFor(JSStack::CodeBlock));
 
         m_out.branch(
@@ -3033,6 +3035,7 @@ private:
                 IndexedAbstractHeap& heap = m_node->arrayMode().type() == Array::Int32 ?
                         m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
 
+                // JSCPolly added block name
                 LBasicBlock storeblock = FTL_NEW_BLOCK(m_out, ("storeblock"));
                 m_out.jump(storeblock);
                 m_out.appendTo(storeblock);
@@ -3041,6 +3044,7 @@ private:
                 TypedPointer baseArray = m_out.baseArray(heap, storage, m_out.zeroExtPtr(index), provenValue(child2));
 
                 // And create a new block to do the store
+                // JSCPolly added block name
               	LBasicBlock putblock = FTL_NEW_BLOCK(m_out, ("putblock"));
               	m_out.jump(putblock);
             	m_out.appendTo(putblock);
@@ -9196,14 +9200,19 @@ private:
             return;
         }
 
+        // JSCPolly
         // TODO: For now, consider the executed code to be stable enough to not put OSR exit for another
         // reason than exiting the function call
-        return;
+        //return;
 
         LBasicBlock lastNext = nullptr;
         LBasicBlock continuation = nullptr;
 
-        LBasicBlock failCase = FTL_NEW_BLOCK(m_out, ("OSR exit failCase for ", m_node));
+        // JSCPolly
+        // Added exit kind string in block name to better understand the IR
+        // when looking at it in the eyes. To see block names in the generated
+        // IR, the --verboseCompilation=true must be specified to jsc
+        LBasicBlock failCase = FTL_NEW_BLOCK(m_out, ("OSR exit failCase for ", m_node, " because of ", exitKindToString(kind)));
         continuation = FTL_NEW_BLOCK(m_out, ("OSR exit continuation for ", m_node));
 
         m_out.branch(failCondition, rarely(failCase), usually(continuation));

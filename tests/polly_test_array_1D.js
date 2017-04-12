@@ -1,23 +1,19 @@
-function test2(flat_pixels)
+function test(flat_pixels)
 {
-    for (var i = 0; i < 5000; i++) {
-	for (var j = 0; j < 5000; j++) {
-	    flat_pixels[i*5000+j] = 666666
+    for (var i = 0; i < N; i++) {
+	for (var j = 0; j < N; j++) {
+	    flat_pixels[i*N+j] += 666666
 	}
     }
 }
 
-function main()
-{
-    var flat_pixels = [];
-    for (var i = 0; i < 5000; i++) {
-	pixels[i] = [];
-	for (var j = 0; j < 5000; j++) {
-            pixels[i][j] = 0;
-	    flat_pixels[i*5000+j] = 0
-	}
+var N = 3000
+var flat_pixels = [];
+for (var i = 0; i < N; i++) {
+    for (var j = 0; j < N; j++) {
+	flat_pixels[i*N+j] = i + j
     }
-    test2 (flat_pixels);
 }
-
-main()
+print(flat_pixels[50*N+50])
+test(flat_pixels);
+print(flat_pixels[50*N+50])
