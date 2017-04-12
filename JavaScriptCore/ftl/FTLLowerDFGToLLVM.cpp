@@ -9162,6 +9162,7 @@ private:
                 dataLog("        Available recoveries: ", listDump(m_availableRecoveries), "\n");
         }
 
+
         DFG_ASSERT(m_graph, m_node, origin.exitOK);
 
         if (doOSRExitFuzzing() && !isExceptionHandler) {
@@ -9184,7 +9185,6 @@ private:
         }
 
         // End of regular exit handle
-
         if (failCondition == m_out.booleanFalse)
             return;
 

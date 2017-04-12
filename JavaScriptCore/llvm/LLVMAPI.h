@@ -42,8 +42,15 @@ struct LLVMAPI {
     // Functions that we add conditionally.
     void (*AddLowerSwitchPass)(LLVMPassManagerRef PM);
 
+    // JSCPolly
     LLVMValueRef (*BuildGEP) (LLVMBuilderRef B, LLVMValueRef Pointer, LLVMValueRef *Indices, unsigned NumIndices, const char *Name); \
     LLVMValueRef (*BuildInBoundsGEP) (LLVMBuilderRef B, LLVMValueRef Pointer, LLVMValueRef *Indices, unsigned NumIndices, const char *Name); \
+
+    void (*registerPollyPasses) (llvm::legacy::PassManagerBase &PM);
+    void (*registerCanonicalicationPasses) (llvm::legacy::PassManagerBase &PM);
+
+//    Pass* (*createScopDetectionPass) ();
+
 };
 
 extern LLVMAPI* llvm;

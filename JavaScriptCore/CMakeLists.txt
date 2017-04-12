@@ -966,6 +966,14 @@ if (ENABLE_FTL_JIT)
     add_library(llvmForJSC SHARED ${llvmForJSC_SOURCES} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WebKitLLVMLibraryToken.h)
     target_link_libraries(llvmForJSC ${LLVM_STATIC_LIBRARIES} ${LLVM_SYSTEM_LIBRARIES} -Wl,--version-script=${JAVASCRIPTCORE_DIR}/llvm/library/libllvmForJSC.version)
 
+    # Adding polly libraries dependencies
+
+    MESSAGE( STATUS "LLVM LIBDIR " ${LLVM_LIB_DIR})
+    target_link_libraries(llvmForJSC ${LLVM_LIB_DIR}/libPolly.a)
+    target_link_libraries(llvmForJSC ${LLVM_LIB_DIR}/libPollyISL.a)
+    target_link_libraries(llvmForJSC ${LLVM_LIB_DIR}/libPollyPPCG.a)
+    target_link_libraries(llvmForJSC ${LLVM_LIB_DIR}/libLLVMSupport.a)
+
     # Added extra items for JavaScriptCore
     list(APPEND JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
         ${LLVM_INCLUDE_DIRS}
@@ -1311,6 +1319,7 @@ include_directories(${JavaScriptCore_INCLUDE_DIRECTORIES})
 include_directories(SYSTEM ${JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES})
 add_library(JavaScriptCore ${JavaScriptCore_LIBRARY_TYPE} ${JavaScriptCore_HEADERS} ${JavaScriptCore_SOURCES})
 target_link_libraries(JavaScriptCore ${JavaScriptCore_LIBRARIES})
+
 set_target_properties(JavaScriptCore PROPERTIES COMPILE_DEFINITIONS "BUILDING_JavaScriptCore")
 set_target_properties(JavaScriptCore PROPERTIES FOLDER "JavaScriptCore")
 

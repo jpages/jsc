@@ -56,6 +56,10 @@
 #include <llvm-c/Transforms/PassManagerBuilder.h>
 #include <llvm-c/Transforms/Scalar.h>
 
+
+#include <polly/RegisterPasses.h>
+#include <polly/Canonicalization.h>
+
 #if COMPILER(CLANG)
 #pragma clang diagnostic pop
 #endif // COMPILER(CLANG)

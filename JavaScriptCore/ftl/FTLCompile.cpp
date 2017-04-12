@@ -1190,6 +1190,10 @@ void compile(State& state, Safepoint::Result& safepointResult)
             if (enableLLVMFastISel)
                 llvm->AddLowerSwitchPass(modulePasses);
 
+            // JSCPolly
+            llvm->registerCanonicalicationPasses((llvm::legacy::PassManagerBase&)modulePasses);
+            llvm->registerPollyPasses((llvm::legacy::PassManagerBase&)modulePasses);
+
             llvm->RunPassManager(modulePasses, module);
         } else {
             LLVMPassManagerBuilderRef passBuilder = llvm->PassManagerBuilderCreate();
