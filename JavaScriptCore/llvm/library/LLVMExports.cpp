@@ -135,6 +135,10 @@ extern "C" JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(
     result->BuildGEP = LLVMBuildGEP;
     result->BuildInBoundsGEP = LLVMBuildInBoundsGEP;
 
+    // Polly passes
+    result->registerPollyPasses = polly::registerPollyPasses;
+    result->registerCanonicalicationPasses = polly::registerCanonicalicationPasses;
+
     // Handle conditionally available functions.
 #if LLVM_VERSION_MAJOR >= 4 || (LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR >= 6)
     result->AddLowerSwitchPass = LLVMAddLowerSwitchPass;
