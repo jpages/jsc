@@ -132,10 +132,13 @@ extern "C" JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(
     FOR_EACH_LLVM_API_FUNCTION(LLVM_API_FUNCTION_ASSIGNMENT);
 #undef LLVM_API_FUNCTION_ASSIGNMENT
     
+    // JSCPolly
     result->BuildGEP = LLVMBuildGEP;
     result->BuildInBoundsGEP = LLVMBuildInBoundsGEP;
 
     // Polly passes
+    result->GetGlobalPassRegistry = LLVMGetGlobalPassRegistry;
+    result->initializePollyPasses = polly::initializePollyPasses;
     result->registerPollyPasses = polly::registerPollyPasses;
     result->registerCanonicalicationPasses = polly::registerCanonicalicationPasses;
 
