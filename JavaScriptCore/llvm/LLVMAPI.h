@@ -46,10 +46,11 @@ struct LLVMAPI {
     LLVMValueRef (*BuildGEP) (LLVMBuilderRef B, LLVMValueRef Pointer, LLVMValueRef *Indices, unsigned NumIndices, const char *Name); \
     LLVMValueRef (*BuildInBoundsGEP) (LLVMBuilderRef B, LLVMValueRef Pointer, LLVMValueRef *Indices, unsigned NumIndices, const char *Name); \
 
+    LLVMPassRegistryRef (*GetGlobalPassRegistry) (void);
+
+    void (*initializePollyPasses) (llvm::PassRegistry &Registry);
     void (*registerPollyPasses) (llvm::legacy::PassManagerBase &PM);
     void (*registerCanonicalicationPasses) (llvm::legacy::PassManagerBase &PM);
-
-//    Pass* (*createScopDetectionPass) ();
 
 };
 
