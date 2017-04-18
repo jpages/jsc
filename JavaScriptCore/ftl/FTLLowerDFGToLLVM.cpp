@@ -2678,6 +2678,9 @@ private:
 
                 LValue result = m_out.loadArray(pointer, index, provenValue(m_node->child2()));
 
+                // JSCPolly
+                // Comment/uncomment the following lines to remove/restore
+                // osr exit when load from hole in an array
                 // Test whether the accessed value is a hole in the array or not
 //                LValue isHole = m_out.isZero64(result);
 //                if (m_node->arrayMode().isSaneChain()) {
