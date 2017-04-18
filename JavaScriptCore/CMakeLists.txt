@@ -970,8 +970,6 @@ if (ENABLE_FTL_JIT)
 
     MESSAGE( STATUS "LLVM LIBDIR " ${LLVM_LIB_DIR})
     target_link_libraries(llvmForJSC ${LLVM_LIB_DIR}/libPolly.a)
-    target_link_libraries(llvmForJSC ${LLVM_LIB_DIR}/libPollyISL.a)
-    target_link_libraries(llvmForJSC ${LLVM_LIB_DIR}/libPollyPPCG.a)
     target_link_libraries(llvmForJSC ${LLVM_LIB_DIR}/libLLVMSupport.a)
 
     # Added extra items for JavaScriptCore
