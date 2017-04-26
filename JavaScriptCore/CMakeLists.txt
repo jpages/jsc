@@ -966,8 +966,8 @@ if (ENABLE_FTL_JIT)
     add_library(llvmForJSC SHARED ${llvmForJSC_SOURCES} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WebKitLLVMLibraryToken.h)
     target_link_libraries(llvmForJSC ${LLVM_STATIC_LIBRARIES} ${LLVM_SYSTEM_LIBRARIES} -Wl,--version-script=${JAVASCRIPTCORE_DIR}/llvm/library/libllvmForJSC.version)
 
+    # JSCPolly
     # Adding polly libraries dependencies
-
     MESSAGE( STATUS "LLVM LIBDIR " ${LLVM_LIB_DIR})
     target_link_libraries(llvmForJSC ${LLVM_LIB_DIR}/libPolly.a)
     target_link_libraries(llvmForJSC ${LLVM_LIB_DIR}/libLLVMSupport.a)
@@ -1320,6 +1320,12 @@ target_link_libraries(JavaScriptCore ${JavaScriptCore_LIBRARIES})
 
 set_target_properties(JavaScriptCore PROPERTIES COMPILE_DEFINITIONS "BUILDING_JavaScriptCore")
 set_target_properties(JavaScriptCore PROPERTIES FOLDER "JavaScriptCore")
+
+# JSCPolly
+if(ENABLE_FTL_JIT_POLLY)
+  message ("POLLLLLLLLLLLLLLLLLLLLLLLLLYYYYYYYYYYYYYY")
+  target_compile_definitions(JavaScriptCore PRIVATE "JSCPOLLY")
+endif()
 
 if (JavaScriptCore_POST_BUILD_COMMAND)
     add_custom_command(TARGET JavaScriptCore POST_BUILD COMMAND ${JavaScriptCore_POST_BUILD_COMMAND} VERBATIM)

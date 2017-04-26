@@ -2678,20 +2678,24 @@ private:
 
                 LValue result = m_out.loadArray(pointer, index, provenValue(m_node->child2()));
 
-                // JSCPolly
-                // Comment/uncomment the following lines to remove/restore
-                // osr exit when load from hole in an array
-                // Test whether the accessed value is a hole in the array or not
-//                LValue isHole = m_out.isZero64(result);
-//                if (m_node->arrayMode().isSaneChain()) {
-//                    DFG_ASSERT(
-//                        m_graph, m_node, m_node->arrayMode().type() == Array::Contiguous);
-//                    result = m_out.select(
-//                        isHole, m_out.constInt64(JSValue::encode(jsUndefined())), result);
-//                } else
-//                    speculate(LoadFromHole, noValue(), 0, isHole);
+#ifdef JSCPOLLY
+
+                // Removed  test when load from hole in an array
                 setJSValue(result);
                 return;
+#else
+				// Test whether the accessed value is a hole in the array or not
+				LValue isHole = m_out.isZero64(result);
+				if (m_node->arrayMode().isSaneChain()) {
+					DFG_ASSERT(
+						m_graph, m_node, m_node->arrayMode().type() == Array::Contiguous);
+					result = m_out.select(
+						isHole, m_out.constInt64(JSValue::encode(jsUndefined())), result);
+				} else
+					speculate(LoadFromHole, noValue(), 0, isHole);
+				setJSValue(result);
+				return;
+#endif
             }
 
             // The value is not in bounds, reallocate the array to get it
@@ -3038,7 +3042,7 @@ private:
                 IndexedAbstractHeap& heap = m_node->arrayMode().type() == Array::Int32 ?
                         m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
 
-                // JSCPolly added block name
+                // JSCPOLLY added block name
                 LBasicBlock storeblock = FTL_NEW_BLOCK(m_out, ("storeblock"));
                 m_out.jump(storeblock);
                 m_out.appendTo(storeblock);
@@ -3047,7 +3051,7 @@ private:
                 TypedPointer baseArray = m_out.baseArray(heap, storage, m_out.zeroExtPtr(index), provenValue(child2));
 
                 // And create a new block to do the store
-                // JSCPolly added block name
+                // JSCPOLLY added block name
               	LBasicBlock putblock = FTL_NEW_BLOCK(m_out, ("putblock"));
               	m_out.jump(putblock);
             	m_out.appendTo(putblock);
@@ -9203,15 +9207,17 @@ private:
             return;
         }
 
-        // JSCPolly
+#ifdef JSCPOLLY
+        // JSCPOLLY
         // TODO: For now, consider the executed code to be stable enough to not put OSR exit for another
         // reason than exiting the function call
-        //return;
+        return;
+#endif
 
         LBasicBlock lastNext = nullptr;
         LBasicBlock continuation = nullptr;
 
-        // JSCPolly
+        // JSCPOLLY
         // Added exit kind string in block name to better understand the IR
         // when looking at it in the eyes. To see block names in the generated
         // IR, the --verboseCompilation=true must be specified to jsc

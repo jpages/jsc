@@ -1,8 +1,8 @@
-function test(flat_pixels)
+function test(p)
 {
     for (var i = 0; i < N; i++) {
 	for (var j = 0; j < N; j++) {
-	    flat_pixels[i*N+j] += 666666
+	    p[i*N+j] += 666666
 	}
     }
 }

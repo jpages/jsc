@@ -248,9 +248,12 @@ static inline LValue buildICmp(LBuilder builder, LIntPredicate cond, LValue left
 static inline LValue buildFCmp(LBuilder builder, LRealPredicate cond, LValue left, LValue right) { return llvm->BuildFCmp(builder, cond, left, right, ""); }
 static inline LValue buildInsertElement(LBuilder builder, LValue vector, LValue element, LValue index) { return llvm->BuildInsertElement(builder, vector, element, index, ""); }
 
+#ifdef JSCPOLLY
+// JSCPOLLY BEGIN
 // Generate a GetElementPtr to access an array
 static inline LValue buildGEP(LBuilder builder, LValue Pointer, LValue *Indices, unsigned NumIndices) { return llvm->BuildGEP(builder, Pointer, Indices, NumIndices, ""); }
-
+// JSCPOLLY END
+#endif
 
 static inline LValue buildFence(LBuilder builder, LAtomicOrdering ordering, SynchronizationScope scope = CrossThread)
 {
