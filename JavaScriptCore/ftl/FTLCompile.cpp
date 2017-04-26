@@ -1167,16 +1167,21 @@ void compile(State& state, Safepoint::Result& safepointResult)
         LLVMPassManagerRef functionPasses = 0;
         LLVMPassManagerRef modulePasses;
 
-        //JSCPolly
+#ifdef JSCPOLLY
+        // JSCPOLLY BEGIN
         LLVMPassRegistryRef passRegistry;
+        // JSCPOLLY END
+#endif
 
         if (Options::llvmSimpleOpt()) {
             modulePasses = llvm->CreatePassManager();
             functionPasses = llvm->CreateFunctionPassManagerForModule(module);
-            passRegistry = llvm->GetGlobalPassRegistry();
 
+#ifdef JSCPOLLY
             // Intialize LLVM passes used by Polly
+            passRegistry = llvm->GetGlobalPassRegistry();
             llvm->initializePollyPasses(*reinterpret_cast<llvm::PassRegistry*>(passRegistry));
+#endif
 
             llvm->AddTargetData(targetData, modulePasses);
             llvm->AddAnalysisPasses(targetMachine, modulePasses);
@@ -1199,11 +1204,14 @@ void compile(State& state, Safepoint::Result& safepointResult)
             if (enableLLVMFastISel)
                 llvm->AddLowerSwitchPass(modulePasses);
 
-            // JSCPolly
+#ifdef JSCPOLLY
+            // JSCPOLLY BEGIN
             llvm->registerPollyPasses(*reinterpret_cast<llvm::legacy::PassManager*>(modulePasses));
             llvm->RunPassManager(modulePasses, module);
+            //llvm->DumpModule(module);
+            // JSCPOLLY END
+#endif
 
-            llvm->DumpModule(module);
         } else {
             LLVMPassManagerBuilderRef passBuilder = llvm->PassManagerBuilderCreate();
             llvm->PassManagerBuilderSetOptLevel(passBuilder, Options::llvmOptimizationLevel());
