@@ -95,6 +95,7 @@ LValue Output::load(TypedPointer pointer, LType refType)
     return result;
 }
 
+#ifdef JSCPOLLY
 /* baseArray points to the beginning of the array */
 LValue Output::loadArray(TypedPointer baseArray, LValue index, JSValue value)
 {
@@ -110,6 +111,7 @@ LValue Output::loadArray(TypedPointer baseArray, LValue index, JSValue value)
 	baseArray.heap().decorateInstruction(result, *m_heaps);
     return result;
 }
+#endif
 
 void Output::store(LValue value, TypedPointer pointer, LType refType)
 {
@@ -119,6 +121,7 @@ void Output::store(LValue value, TypedPointer pointer, LType refType)
     pointer.heap().decorateInstruction(result, *m_heaps);
 }
 
+#ifdef JSCPOLLY
 void Output::storeArray(LValue value, TypedPointer baseArray, LValue index)
 {
 	LValue result;
@@ -132,6 +135,7 @@ void Output::storeArray(LValue value, TypedPointer baseArray, LValue index)
 
 	baseArray.heap().decorateInstruction(result, *m_heaps);
 }
+#endif
 
 LValue Output::baseIndex(LValue base, LValue index, Scale scale, ptrdiff_t offset)
 {
