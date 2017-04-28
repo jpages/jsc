@@ -288,7 +288,6 @@ public:
         m_tagMask = m_out.constInt64(TagMask);
 
         uintptr_t number = (uintptr_t)codeBlock();
-        std::cout << "MANU = " << number << std::endl;
         m_out.storePtr(m_out.constIntPtr(codeBlock()), addressFor(JSStack::CodeBlock));
 
         m_out.branch(
@@ -2665,6 +2664,7 @@ private:
             IndexedAbstractHeap& heap = m_node->arrayMode().type() == Array::Int32 ?
                 m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
 
+#ifdef JSCPOLLY
             // Do the intoptr instruction in the current block
           	TypedPointer pointer = basePtr(heap, storage, index, m_node->child2());
 
@@ -2675,11 +2675,9 @@ private:
 
             // The accessed value is in the array, no need to reallocate
             if (m_node->arrayMode().isInBounds()) {
-
                 LValue result = m_out.loadArray(pointer, index, provenValue(m_node->child2()));
 
 #ifdef JSCPOLLY
-
                 // Removed  test when load from hole in an array
                 setJSValue(result);
                 return;
@@ -2697,6 +2695,21 @@ private:
 				return;
 #endif
             }
+#else
+			if (m_node->arrayMode().isInBounds()) {
+				LValue result = m_out.load64(baseIndex(heap, storage, index, m_node->child2()));
+				LValue isHole = m_out.isZero64(result);
+				if (m_node->arrayMode().isSaneChain()) {
+					DFG_ASSERT(
+							m_graph, m_node, m_node->arrayMode().type() == Array::Contiguous);
+					result = m_out.select(
+							isHole, m_out.constInt64(JSValue::encode(jsUndefined())), result);
+				} else
+				speculate(LoadFromHole, noValue(), 0, isHole);
+				setJSValue(result);
+				return;
+			}
+#endif
 
             // The value is not in bounds, reallocate the array to get it
             LValue base = lowCell(m_node->child1());
@@ -3039,6 +3052,7 @@ private:
                 if (m_node->arrayMode().type() == Array::Int32)
                     FTL_TYPE_CHECK(jsValueValue(value), child3, SpecInt32, isNotInt32(value));
 
+#ifdef JSCPOLLY
                 IndexedAbstractHeap& heap = m_node->arrayMode().type() == Array::Int32 ?
                         m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
 
@@ -3069,6 +3083,26 @@ private:
 
                 m_out.storeArray(value, baseArray, index);
                 break;
+#else
+                TypedPointer elementPointer = m_out.baseIndex(
+					m_node->arrayMode().type() == Array::Int32 ?
+					m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties,
+					storage, m_out.zeroExtPtr(index), provenValue(child2));
+
+				if (m_node->op() == PutByValAlias) {
+					m_out.store64(value, elementPointer);
+					break;
+				}
+
+				contiguousPutByValOutOfBounds(
+					codeBlock()->isStrictMode()
+					? operationPutByValBeyondArrayBoundsStrict
+					: operationPutByValBeyondArrayBoundsNonStrict,
+					base, storage, index, value, continuation);
+
+				m_out.store64(value, elementPointer);
+				break;
+#endif
             }
 
             case Array::Double: {
@@ -6608,12 +6642,14 @@ private:
             m_out.constInt32(FastTypedArray));
     }
 
+#ifdef JSCPOLLY
     // Generate a pointer to the base of the array
     TypedPointer basePtr(IndexedAbstractHeap& heap, LValue storage, LValue index, Edge edge, ptrdiff_t offset = 0)
 	{
 		return m_out.baseArray(
 			heap, storage, m_out.zeroExtPtr(index), provenValue(edge), offset);
 	}
+#endif
 
     TypedPointer baseIndex(IndexedAbstractHeap& heap, LValue storage, LValue index, Edge edge, ptrdiff_t offset = 0)
     {

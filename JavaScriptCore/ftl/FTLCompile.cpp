@@ -1207,10 +1207,10 @@ void compile(State& state, Safepoint::Result& safepointResult)
 #ifdef JSCPOLLY
             // JSCPOLLY BEGIN
             llvm->registerPollyPasses(*reinterpret_cast<llvm::legacy::PassManager*>(modulePasses));
-            llvm->RunPassManager(modulePasses, module);
             //llvm->DumpModule(module);
             // JSCPOLLY END
 #endif
+            llvm->RunPassManager(modulePasses, module);
 
         } else {
             LLVMPassManagerBuilderRef passBuilder = llvm->PassManagerBuilderCreate();

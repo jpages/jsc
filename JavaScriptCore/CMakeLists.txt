@@ -1323,8 +1323,8 @@ set_target_properties(JavaScriptCore PROPERTIES FOLDER "JavaScriptCore")
 
 # JSCPolly
 if(ENABLE_FTL_JIT_POLLY)
-  message ("POLLLLLLLLLLLLLLLLLLLLLLLLLYYYYYYYYYYYYYY")
   target_compile_definitions(JavaScriptCore PRIVATE "JSCPOLLY")
+  target_compile_definitions(llvmForJSC PRIVATE "JSCPOLLY")
 endif()
 
 if (JavaScriptCore_POST_BUILD_COMMAND)

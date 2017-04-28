@@ -56,9 +56,10 @@
 #include <llvm-c/Transforms/PassManagerBuilder.h>
 #include <llvm-c/Transforms/Scalar.h>
 
-
+#ifdef JSCPOLLY
 #include <polly/RegisterPasses.h>
 #include <polly/Canonicalization.h>
+#endif
 
 #if COMPILER(CLANG)
 #pragma clang diagnostic pop
