@@ -17,5 +17,3 @@ for (var i = 0; i < N; i++) {
 print(flat_pixels[50*N+50])
 test(flat_pixels);
 print(flat_pixels[50*N+50])
-test(flat_pixels);
-print(flat_pixels[50*N+50])

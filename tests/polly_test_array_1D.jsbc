@@ -1,0 +1,137 @@
+<global>#AU0bw5:[0x7fe16e477d00->0x7fe16e479900, NoneGlobal, 501]: 501 m_instructions; 4008 bytes; 1 parameter(s); 16 callee register(s); 5 variable(s)
+[   0] enter             
+[   1] get_scope         loc3
+[   3] mov               loc4, loc3
+[   6] new_func          loc5, loc3, f0
+[  10] resolve_scope     loc6, loc3, test(@id0), <GlobalVar>, 1, 0x7fe16e443700
+[  17] mov               loc7, loc6
+[  20] put_to_scope      loc7, test(@id0), loc5, 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, <structure>, 1853695320
+[  27] mov               loc5, Undefined(const0)
+[  30] resolve_scope     loc6, loc3, N(@id1), <GlobalVar>, 1, 0x7fe16e443700
+[  37] put_to_scope      loc6, N(@id1), Int32: 3000(const1), 1048577<DoNotThrowIfNotFound|GlobalVar|Initialization>, <structure>, 1853695352
+[  44] resolve_scope     loc6, loc3, flat_pixels(@id2), <GlobalVar>, 1, 0x7fe16e443700
+[  51] new_array         loc7, head0, 0
+[  56] put_to_scope      loc6, flat_pixels(@id2), loc7, 1048577<DoNotThrowIfNotFound|GlobalVar|Initialization>, <structure>, 1853695328
+[  63] resolve_scope     loc6, loc3, i(@id3), <GlobalVar>, 1, 0x7fe16e443700
+[  70] put_to_scope      loc6, i(@id3), Int32: 0(const2), 1048577<DoNotThrowIfNotFound|GlobalVar|Initialization>, <structure>, 1853695336
+[  77] resolve_scope     loc6, loc3, i(@id3), <GlobalVar>, 1, 0x7fe16e443700
+[  84] get_from_scope    loc6, loc6, i(@id3), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695336    predicting None
+[  92] resolve_scope     loc7, loc3, N(@id1), <GlobalVar>, 1, 0x7fe16e443700
+[  99] get_from_scope    loc8, loc7, N(@id1), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695352    predicting None
+[ 107] jnless            loc6, loc8, 280(->387)
+[ 111] loop_hint         
+[ 112] resolve_scope     loc6, loc3, j(@id4), <GlobalVar>, 1, 0x7fe16e443700
+[ 119] put_to_scope      loc6, j(@id4), Int32: 0(const2), 1048577<DoNotThrowIfNotFound|GlobalVar|Initialization>, <structure>, 1853695344
+[ 126] resolve_scope     loc6, loc3, j(@id4), <GlobalVar>, 1, 0x7fe16e443700
+[ 133] get_from_scope    loc6, loc6, j(@id4), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695344    predicting None
+[ 141] resolve_scope     loc7, loc3, N(@id1), <GlobalVar>, 1, 0x7fe16e443700
+[ 148] get_from_scope    loc8, loc7, N(@id1), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695352    predicting None
+[ 156] jnless            loc6, loc8, 173(->329)
+[ 160] loop_hint         
+[ 161] resolve_scope     loc6, loc3, flat_pixels(@id2), <GlobalVar>, 1, 0x7fe16e443700
+[ 168] get_from_scope    loc6, loc6, flat_pixels(@id2), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695328    predicting None
+[ 176] resolve_scope     loc9, loc3, i(@id3), <GlobalVar>, 1, 0x7fe16e443700
+[ 183] get_from_scope    loc9, loc9, i(@id3), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695336    predicting None
+[ 191] resolve_scope     loc10, loc3, N(@id1), <GlobalVar>, 1, 0x7fe16e443700
+[ 198] get_from_scope    loc11, loc10, N(@id1), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695352    predicting None
+[ 206] mul               loc8, loc9, loc11
+[ 211] resolve_scope     loc9, loc3, j(@id4), <GlobalVar>, 1, 0x7fe16e443700
+[ 218] get_from_scope    loc10, loc9, j(@id4), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695344    predicting None
+[ 226] add               loc7, loc8, loc10
+[ 231] resolve_scope     loc8, loc3, i(@id3), <GlobalVar>, 1, 0x7fe16e443700
+[ 238] get_from_scope    loc8, loc8, i(@id3), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695336    predicting None
+[ 246] resolve_scope     loc9, loc3, j(@id4), <GlobalVar>, 1, 0x7fe16e443700
+[ 253] get_from_scope    loc10, loc9, j(@id4), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695344    predicting None
+[ 261] add               loc5, loc8, loc10
+[ 266] put_by_val        loc6, loc7, loc5    Original
+[ 271] resolve_scope     loc6, loc3, j(@id4), <GlobalVar>, 1, 0x7fe16e443700
+[ 278] get_from_scope    loc7, loc6, j(@id4), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695344    predicting None
+[ 286] inc               loc7
+[ 288] put_to_scope      loc6, j(@id4), loc7, 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, <structure>, 1853695344
+[ 295] resolve_scope     loc6, loc3, j(@id4), <GlobalVar>, 1, 0x7fe16e443700
+[ 302] get_from_scope    loc6, loc6, j(@id4), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695344    predicting None
+[ 310] resolve_scope     loc7, loc3, N(@id1), <GlobalVar>, 1, 0x7fe16e443700
+[ 317] get_from_scope    loc8, loc7, N(@id1), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695352    predicting None
+[ 325] jless             loc6, loc8, -165(->160)
+[ 329] resolve_scope     loc6, loc3, i(@id3), <GlobalVar>, 1, 0x7fe16e443700
+[ 336] get_from_scope    loc7, loc6, i(@id3), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695336    predicting None
+[ 344] inc               loc7
+[ 346] put_to_scope      loc6, i(@id3), loc7, 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, <structure>, 1853695336
+[ 353] resolve_scope     loc6, loc3, i(@id3), <GlobalVar>, 1, 0x7fe16e443700
+[ 360] get_from_scope    loc6, loc6, i(@id3), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695336    predicting None
+[ 368] resolve_scope     loc7, loc3, N(@id1), <GlobalVar>, 1, 0x7fe16e443700
+[ 375] get_from_scope    loc8, loc7, N(@id1), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695352    predicting None
+[ 383] jless             loc6, loc8, -272(->111)
+[ 387] resolve_scope     loc10, loc3, print(@id5), <GlobalProperty>, 1, 0x7fe16e443700
+[ 394] get_from_scope    loc6, loc10, print(@id5), 1024<ThrowIfNotFound|GlobalProperty|NotInitialization>, 151    predicting None
+[ 402] resolve_scope     loc11, loc3, flat_pixels(@id2), <GlobalVar>, 1, 0x7fe16e443700
+[ 409] get_from_scope    loc11, loc11, flat_pixels(@id2), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695328    predicting None
+[ 417] mov               loc12, Int32: 50(const3)
+[ 420] resolve_scope     loc13, loc3, N(@id1), <GlobalVar>, 1, 0x7fe16e443700
+[ 427] get_from_scope    loc14, loc13, N(@id1), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695352    predicting None
+[ 435] mul               loc12, loc12, loc14
+[ 440] add               loc12, loc12, Int32: 50(const3)
+[ 445] get_by_val        loc9, loc11, loc12    Original; predicting None
+[ 451] call              loc5, loc6, 2, 16 status(Could Take Slow Path, maxNumArguments = 32767)    Original; predicting None
+[ 460] resolve_scope     loc10, loc3, test(@id0), <GlobalVar>, 1, 0x7fe16e443700
+[ 467] get_from_scope    loc6, loc10, test(@id0), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695320    predicting None
+[ 475] resolve_scope     loc9, loc3, flat_pixels(@id2), <GlobalVar>, 1, 0x7fe16e443700
+[ 482] get_from_scope    loc9, loc9, flat_pixels(@id2), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695328    predicting None
+[ 490] call              loc5, loc6, 2, 16 status(Could Take Slow Path, maxNumArguments = 32737)    Original; predicting None
+[ 499] end               loc5
+
+Identifiers:
+  id0 = test
+  id1 = N
+  id2 = flat_pixels
+  id3 = i
+  id4 = j
+  id5 = print
+
+Constants:
+   k0 = Undefined
+   k1 = Int32: 3000: in source as integer
+   k2 = Int32: 0: in source as integer
+   k3 = Int32: 50: in source as integer
+
+test#D7uaqX:[0x7fe16e477a00->0x7fe16e46cc00, NoneFunctionCall, 140]: 140 m_instructions; 1120 bytes; 2 parameter(s); 14 callee register(s); 8 variable(s)
+[   0] enter             
+[   1] get_scope         loc3
+[   3] mov               loc4, loc3
+[   6] mov               loc6, Int32: 0(const1)
+[   9] resolve_scope     loc8, loc3, N(@id0), <GlobalVar>, 1, 0x7fe16e443700
+[  16] get_from_scope    loc9, loc8, N(@id0), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695352    predicting None
+[  24] jnless            loc6, loc9, 114(->138)
+[  28] loop_hint         
+[  29] mov               loc5, Int32: 0(const1)
+[  32] resolve_scope     loc8, loc3, N(@id0), <GlobalVar>, 1, 0x7fe16e443700
+[  39] get_from_scope    loc9, loc8, N(@id0), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695352    predicting None
+[  47] jnless            loc5, loc9, 70(->117)
+[  51] loop_hint         
+[  52] mov               loc8, arg1
+[  55] resolve_scope     loc9, loc3, N(@id0), <GlobalVar>, 1, 0x7fe16e443700
+[  62] get_from_scope    loc10, loc9, N(@id0), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695352    predicting None
+[  70] mul               loc11, loc6, loc10
+[  75] add               loc11, loc11, loc5
+[  80] get_by_val        loc12, loc8, loc11    Original; predicting None
+[  86] add               loc12, loc12, Int32: 666666(const2)
+[  91] put_by_val        loc8, loc11, loc12    Original
+[  96] inc               loc5
+[  98] resolve_scope     loc8, loc3, N(@id0), <GlobalVar>, 1, 0x7fe16e443700
+[ 105] get_from_scope    loc9, loc8, N(@id0), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695352    predicting None
+[ 113] jless             loc5, loc9, -62(->51)
+[ 117] inc               loc6
+[ 119] resolve_scope     loc8, loc3, N(@id0), <GlobalVar>, 1, 0x7fe16e443700
+[ 126] get_from_scope    loc9, loc8, N(@id0), 1025<ThrowIfNotFound|GlobalVar|NotInitialization>, 1853695352    predicting None
+[ 134] jless             loc6, loc9, -106(->28)
+[ 138] ret               Undefined(const3)
+
+Identifiers:
+  id0 = N
+
+Constants:
+   k0 = Cell: 0x7fe16e44be40 (0x7fe16e42b600:[SymbolTable, {}, NonArray, Leaf]), ID: 20
+   k1 = Int32: 0: in source as integer
+   k2 = Int32: 666666: in source as integer
+   k3 = Undefined
+

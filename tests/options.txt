@@ -1,0 +1,223 @@
+All JSC runtime options:
+   dumpOptions=0   ... dumps JSC options (0 = None, 1 = Overridden only, 2 = All, 3 = Verbose)
+
+   useLLInt=true   ... allows the LLINT to be used if true
+
+   useJIT=true   ... allows the baseline JIT to be used if true
+
+   useDFGJIT=true   ... allows the DFG JIT to be used if true
+
+   useRegExpJIT=true   ... allows the RegExp JIT to be used if true
+
+   reportMustSucceedExecutableAllocations=false
+   maxPerThreadStackUsage=4194304
+   reservedZoneSize=131072
+   errorModeReservedZoneSize=65536
+   crashIfCantAllocateJITMemory=false
+   jitMemoryReservationSize=0
+   forceCodeBlockLiveness=false
+   forceICFailure=false
+   repatchCountForCoolDown=10
+   initialCoolDownCount=20
+   dumpGeneratedBytecodes=false
+   dumpBytecodeLivenessResults=false
+   validateBytecode=false
+   forceDebuggerBytecodeGeneration=false
+   forceProfilerBytecodeGeneration=false
+   useFunctionDotArguments=true
+   useTailCalls=true
+   dumpDisassembly=false   ... dumps disassembly of all JIT compiled code upon compilation
+
+   asyncDisassembly=false
+   dumpDFGDisassembly=false   ... dumps disassembly of DFG function upon compilation
+
+   dumpFTLDisassembly=false   ... dumps disassembly of FTL function upon compilation
+
+   dumpAllDFGNodes=false
+   bytecodeRangeToDFGCompile=<null>   ... bytecode size range to allow DFG compilation on, e.g. 1:100
+
+   dfgWhitelist=""   ... file with list of function signatures to allow DFG compilation on
+
+   dumpSourceAtDFGTime=false   ... dumps source code of JS function being DFG compiled
+
+   dumpBytecodeAtDFGTime=false   ... dumps bytecode of JS function being DFG compiled
+
+   dumpGraphAfterParsing=false
+   dumpGraphAtEachPhase=false
+   verboseDFGByteCodeParsing=false
+   verboseCompilation=false
+   verboseFTLCompilation=false
+   logCompilationChanges=false
+   printEachOSRExit=false
+   validateGraph=false
+   validateGraphAtEachPhase=false
+   verboseValidationFailure=false
+   verboseOSR=false
+   verboseFTLOSRExit=false
+   verboseCallLink=false
+   verboseCompilationQueue=false
+   reportCompileTimes=false   ... dumps JS function signature and the time it took to compile
+
+   reportFTLCompileTimes=false   ... dumps JS function signature and the time it took to FTL compile
+
+   reportTotalCompileTimes=false
+   verboseCFA=false
+   verboseFTLToJSThunk=false
+   verboseFTLFailure=false
+   alwaysComputeHash=false
+   testTheFTL=false
+   verboseSanitizeStack=false
+   useGenerationalGC=true
+   eagerlyUpdateTopCallFrame=false
+   useOSREntryToDFG=true
+   useOSREntryToFTL=true
+   useFTLJIT=true   ... allows the FTL JIT to be used if true
+
+   useFTLTBAA=true
+   useLLVMFastISel=false
+   useLLVMSmallCodeModel=false
+   dumpLLVMIR=false
+   validateFTLOSRExitLiveness=false
+   llvmAlwaysFailsBeforeCompile=false
+   llvmAlwaysFailsBeforeLink=false
+   llvmSimpleOpt=true
+   llvmBackendOptimizationLevel=2
+   llvmOptimizationLevel=2
+   llvmSizeLevel=0
+   llvmMaxStackSize=131072
+   llvmDisallowAVX=true
+   ftlCrashes=false
+   ftlCrashesIfCantInitializeLLVM=false
+   clobberAllRegsInFTLICSlowPath=true
+   assumeAllRegsInFTLICAreLive=false
+   useAccessInlining=true
+   maxAccessVariantListSize=8
+   usePolyvariantDevirtualization=true
+   usePolymorphicAccessInlining=true
+   usePolymorphicCallInlining=true
+   maxPolymorphicCallVariantListSize=15
+   maxPolymorphicCallVariantListSizeForTopTier=5
+   maxPolymorphicCallVariantsForInlining=5
+   frequentCallThreshold=2
+   minimumCallToKnownRate=0.51
+   createPreHeaders=true
+   useMovHintRemoval=true
+   usePutStackSinking=true
+   useObjectAllocationSinking=true
+   useCopyBarrierOptimization=true
+   useConcurrentJIT=true   ... allows the DFG / FTL compilation in threads other than the executing JS thread
+
+   numberOfDFGCompilerThreads=1
+   numberOfFTLCompilerThreads=7
+   priorityDeltaOfDFGCompilerThreads=0
+   priorityDeltaOfFTLCompilerThreads=0
+   useProfiler=false
+   forceUDis86Disassembler=false
+   forceLLVMDisassembler=false
+   useArchitectureSpecificOptimizations=true
+   breakOnThrow=false
+   maximumOptimizationCandidateInstructionCount=100000
+   maximumFunctionForCallInlineCandidateInstructionCount=180
+   maximumFunctionForClosureCallInlineCandidateInstructionCount=100
+   maximumFunctionForConstructInlineCandidateInstructionCount=100
+   maximumFTLCandidateInstructionCount=20000
+   maximumInliningDepth=5   ... maximum allowed inlining depth.  Depth of 1 means no inlining
+
+   maximumInliningRecursion=2
+   maximumInliningCallerSize=10000
+   maximumVarargsForInlining=100
+   usePolyvariantCallInlining=true
+   usePolyvariantByIdInlining=true
+   useMaximalFlushInsertionPhase=false   ... Setting to true allows the DFG's MaximalFlushInsertionPhase to run.
+
+   maximumBinaryStringSwitchCaseLength=50
+   maximumBinaryStringSwitchTotalLength=2000
+   jitPolicyScale=1   ... scale JIT thresholds to this specified ratio between 0.0 (compile ASAP) and 1.0 (compile like normal).
+
+   forceEagerCompilation=false
+   thresholdForJITAfterWarmUp=500
+   thresholdForJITSoon=100
+   thresholdForOptimizeAfterWarmUp=1000
+   thresholdForOptimizeAfterLongWarmUp=1000
+   thresholdForOptimizeSoon=1000
+   executionCounterIncrementForLoop=1
+   executionCounterIncrementForEntry=15
+   thresholdForFTLOptimizeAfterWarmUp=100000
+   thresholdForFTLOptimizeSoon=1000
+   ftlTierUpCounterIncrementForLoop=1
+   ftlTierUpCounterIncrementForReturn=15
+   ftlOSREntryFailureCountForReoptimization=15
+   ftlOSREntryRetryThreshold=100
+   evalThresholdMultiplier=10
+   maximumEvalCacheableSourceLength=256
+   randomizeExecutionCountsBetweenCheckpoints=false
+   maximumExecutionCountsBetweenCheckpointsForBaseline=1000
+   maximumExecutionCountsBetweenCheckpointsForUpperTiers=50000
+   likelyToTakeSlowCaseMinimumCount=20
+   couldTakeSlowCaseMinimumCount=10
+   osrExitCountForReoptimization=100
+   osrExitCountForReoptimizationFromLoop=5
+   reoptimizationRetryCounterMax=21 (default: 0)
+   assertICSizing=false   ... crash if estimated IC sizes are inadequate
+
+   dumpFailedICSizing=false   ... dumps a log entry if estimated IC sizes are inadequate
+
+   minimumOptimizationDelay=1
+   maximumOptimizationDelay=5
+   desiredProfileLivenessRate=0.75
+   desiredProfileFullnessRate=0.35
+   doubleVoteRatioForDoubleFormat=2
+   structureCheckVoteRatioForHoisting=1
+   checkArrayVoteRatioForHoisting=1
+   minimumNumberOfScansBetweenRebalance=100
+   numberOfGCMarkers=7
+   opaqueRootMergeThreshold=1000
+   minHeapUtilization=0.8
+   minCopiedBlockUtilization=0.9
+   minMarkedBlockUtilization=0.9
+   slowPathAllocsBetweenGCs=0   ... force a GC on every Nth slow path alloc, where N is specified by this option
+
+   percentCPUPerMBForFullTimer=0.0003125
+   percentCPUPerMBForEdenTimer=0.0025
+   collectionTimerMaxPercentCPU=0.05
+   forceWeakRandomSeed=false
+   forcedWeakRandomSeed=0
+   useZombieMode=false   ... debugging option to scribble over dead objects with 0xdeadbeef
+
+   useImmortalObjects=false   ... debugging option to keep all objects alive forever
+
+   dumpObjectStatistics=false
+   logGC=None   ... debugging option to log GC activity (0 = None, 1 = Basic, 2 = Verbose)
+
+   useGC=true
+   forceGCSlowPaths=false   ... If true, we will force all JIT fast allocations down their slow paths.
+
+   gcMaxHeapSize=0
+   forceRAMSize=0
+   recordGCPauseTimes=false
+   logHeapStatisticsAtExit=false
+   useTypeProfiler=false
+   useControlFlowProfiler=false
+   verifyHeap=false
+   numberOfGCCyclesToRecordForVerification=3
+   useExceptionFuzz=false
+   fireExceptionFuzzAt=0
+   useExecutableAllocationFuzz=false
+   fireExecutableAllocationFuzzAt=0
+   fireExecutableAllocationFuzzAtOrAfter=0
+   verboseExecutableAllocationFuzz=false
+   useOSRExitFuzz=false
+   fireOSRExitFuzzAtStatic=0
+   fireOSRExitFuzzAt=0
+   fireOSRExitFuzzAtOrAfter=0
+   logB3PhaseTimes=false
+   useDollarVM=false   ... installs the $vm debugging tool in global objects
+
+   functionOverrides=""   ... file with debugging overrides for function bodies
+
+   watchdog=0   ... watchdog timeout (0 = Disabled, N = a timeout period of N milliseconds)
+
+   dumpModuleRecord=false
+   dumpModuleLoadingState=false
+   exposeInternalModuleLoader=false   ... expose the internal module loader object to the global space for debugging
+
