@@ -109,6 +109,8 @@ typedef const char* optionString;
     v(bool, useDFGJIT, true, "allows the DFG JIT to be used if true\n") \
     v(bool, useRegExpJIT, true, "allows the RegExp JIT to be used if true\n") \
     \
+    v(bool, jscpollyDumpLLVMRT, false, "dumps llvm runtime behavior\n") \
+	\
     v(bool, reportMustSucceedExecutableAllocations, false, nullptr) \
     \
     v(unsigned, maxPerThreadStackUsage, 4 * MB, nullptr) \

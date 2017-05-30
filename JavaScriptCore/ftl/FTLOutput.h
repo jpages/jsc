@@ -91,6 +91,7 @@ public:
     LValue param(unsigned index) { return getParam(m_function, index); }
     LValue constBool(bool value) { return constInt(boolean, value); }
     LValue constInt32(int32_t value) { return constInt(int32, value); }
+    LValue constInt8(int8_t value) { return constInt(int8, value); }
     template<typename T>
     LValue constIntPtr(T* value) { return constInt(intPtr, bitwise_cast<intptr_t>(value)); }
     template<typename T>
@@ -264,6 +265,7 @@ public:
     LValue loadPtr(TypedPointer pointer) { return load(pointer, refPtr); }
     LValue loadFloatToDouble(TypedPointer pointer) { return buildFPCast(m_builder, load(pointer, refFloat), doubleType); }
     LValue loadDouble(TypedPointer pointer) { return load(pointer, refDouble); }
+    void store8(LValue value, TypedPointer pointer) { store(value, pointer, ref8); }
     void store16(LValue value, TypedPointer pointer) { store(value, pointer, ref16); }
     void store32(LValue value, TypedPointer pointer) { store(value, pointer, ref32); }
     void store64(LValue value, TypedPointer pointer) { store(value, pointer, ref64); }

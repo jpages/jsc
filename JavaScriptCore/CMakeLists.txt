@@ -1321,11 +1321,12 @@ target_link_libraries(JavaScriptCore ${JavaScriptCore_LIBRARIES})
 set_target_properties(JavaScriptCore PROPERTIES COMPILE_DEFINITIONS "BUILDING_JavaScriptCore")
 set_target_properties(JavaScriptCore PROPERTIES FOLDER "JavaScriptCore")
 
-# JSCPolly
+# JSCPOLLY BEGIN
 if(ENABLE_FTL_JIT_POLLY)
   target_compile_definitions(JavaScriptCore PRIVATE "JSCPOLLY")
   target_compile_definitions(llvmForJSC PRIVATE "JSCPOLLY")
 endif()
+# JSCPOLLY END
 
 if (JavaScriptCore_POST_BUILD_COMMAND)
     add_custom_command(TARGET JavaScriptCore POST_BUILD COMMAND ${JavaScriptCore_POST_BUILD_COMMAND} VERBATIM)

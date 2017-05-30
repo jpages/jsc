@@ -56,6 +56,7 @@ namespace JSC { namespace FTL {
     macro(patchpointInt64, "llvm.experimental.patchpoint.i64", functionType(int64, int64, int32, ref8, int32, Variadic)) \
     macro(patchpointVoid, "llvm.experimental.patchpoint.void", functionType(voidType, int64, int32, ref8, int32, Variadic)) \
     macro(stackmap, "llvm.experimental.stackmap", functionType(voidType, int64, int32, Variadic)) \
+	macro(printf, "printf", functionType(int32, ref8, Variadic)) \
     macro(subWithOverflow32, "llvm.ssub.with.overflow.i32", functionType(structType(m_context, int32, boolean), int32, int32)) \
     macro(subWithOverflow64, "llvm.ssub.with.overflow.i64", functionType(structType(m_context, int64, boolean), int64, int64)) \
     macro(trap, "llvm.trap", functionType(voidType)) \

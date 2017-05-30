@@ -30,8 +30,10 @@ if (JSC_OUTPUT_NAME)
 endif ()
 
 # JSCPOLLY BEGIN
-target_link_libraries(jsc "gomp")
-ADD_TARGET_PROPERTIES(jsc LINK_FLAGS "-Wl,--no-as-needed" )
+if(ENABLE_FTL_JIT_POLLY)
+  target_link_libraries(jsc "gomp")
+  ADD_TARGET_PROPERTIES(jsc LINK_FLAGS "-Wl,--no-as-needed" )
+endif()
 # JSCPOLLY END
 
 if (JSC_LINK_FLAGS)

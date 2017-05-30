@@ -37,6 +37,7 @@
 #include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "DFGOSRExitFuzz.h"
 #include "DirectArguments.h"
+#include "FTLAbbreviations.h"
 #include "FTLAbstractHeapRepository.h"
 #include "FTLAvailableRecovery.h"
 #include "FTLB3Output.h"
@@ -121,9 +122,51 @@ public:
     {
     }
 
+    // BEGIN JSCPOLLY
+    void set_string(LValue dest, const char* s) {
+    	size_t idx = 0;
+    	while (1) {
+    		char c = s[idx];
+    		if (c == '\0') {
+    			break;
+    		}
+    		LValue cv = m_out.constInt8(c);
+    		LValue indices[2];
+    		indices[0] = m_out.constInt32(0);
+    		indices[1] = m_out.constInt32(idx);
+    		m_out.set(cv, buildGEP(m_out.m_builder, dest, indices, 2));
+    		idx++;
+    	}
+
+    	// Set \n
+    	LValue cv = m_out.constInt8('\n');
+    	LValue indices[2];
+    	indices[0] = m_out.constInt32(0);
+    	indices[1] = m_out.constInt32(idx);
+    	m_out.set(cv, buildGEP(m_out.m_builder, dest, indices, 2));
+    	idx++;
+
+    	cv = m_out.constInt8('\0');
+    	indices[2];
+    	indices[0] = m_out.constInt32(0);
+    	indices[1] = m_out.constInt32(idx);
+    	m_out.set(cv, buildGEP(m_out.m_builder, dest, indices, 2));
+    }
+    // END JSCPOLLY
+
     void lower()
     {
-        CString name = toCString("jsBody_", ++compileCounter, "_", codeBlock()->inferredName());
+    	// BEGIN JSCPOLLY
+    	// Initial line is only the following:
+    	// name = toCString("jsBody_", codeBlock()->inferredName());
+    	CString name;
+    	if (m_graph.m_plan.mode == FTLForOSREntryMode) {
+    		name = toCString("jsBody_for_osr_entry_", codeBlock()->inferredName());
+    	} else {
+    		name = toCString("jsBody_", codeBlock()->inferredName());
+    	}
+    	// END JSCPOLLY
+
 
         m_graph.ensureDominators();
 
@@ -151,6 +194,7 @@ public:
 #endif
 
         m_prologue = FTL_NEW_BLOCK(m_out, ("Prologue"));
+
         LBasicBlock stackOverflow = FTL_NEW_BLOCK(m_out, ("Stack overflow"));
         m_handleExceptions = FTL_NEW_BLOCK(m_out, ("Handle Exceptions"));
 
@@ -183,6 +227,18 @@ public:
         m_out.call(
             m_out.voidType, m_out.stackmapIntrinsic(), m_out.constInt64(m_ftlState.capturedStackmapID),
             m_out.int32Zero, capturedAlloca);
+
+        // BEGIN JSCPOLLY
+        if (Options::jscpollyDumpLLVMRT()) {
+        	LValue stringAlloca = m_out.alloca(arrayType(m_out.int8, name.length() + 1));
+        	set_string(stringAlloca, name.data());
+        	LValue indices[2];
+        	indices[0] = m_out.constInt32(0);
+        	indices[1] = m_out.constInt32(0);
+        	m_out.call(m_out.int32, m_out.printfIntrinsic(), buildGEP(m_out.m_builder, stringAlloca, indices, 2));
+        }
+        // END JSCPOLLY
+
 #endif // FTL_USE_B3
 
         auto preOrder = m_graph.blocksInPreOrder();
