@@ -41,7 +41,7 @@ function DrawLine(From, To) {
   var x = x1;
   var y = y1;
   var IncX1, IncY1;
-  var IncX2, IncY2;  
+  var IncX2, IncY2;
   var Den;
   var Num;
   var NumAdd;
@@ -93,13 +93,13 @@ function CalcCross(V0, V1) {
 }
 
 function CalcNormal(V0, V1, V2) {
-  var A = new Array();   var B = new Array(); 
+  var A = new Array();   var B = new Array();
   for (var i = 0; i < 3; i++) {
     A[i] = V0[i] - V1[i];
     B[i] = V2[i] - V1[i];
   }
   A = CalcCross(A, B);
-  var Length = Math.sqrt(A[0]*A[0] + A[1]*A[1] + A[2]*A[2]); 
+  var Length = Math.sqrt(A[0]*A[0] + A[1]*A[1] + A[2]*A[2]);
   for (var i = 0; i < 3; i++) A[i] = A[i] / Length;
   A[3] = 1;
   return A;
@@ -194,7 +194,7 @@ function RotateZ(M, Phi) {
   var R = [
   [Cos,-Sin,0,0],
   [Sin,Cos,0,0],
-  [0,0,1,0],   
+  [0,0,1,0],
   [0,0,0,1]
   ];
   return MMulti(R, M);
@@ -284,7 +284,7 @@ function Init(CubeSize) {
   [0,0,1,0],
   [0,0,0,1]
   ];
-  
+
   // position information of qube
   MQube = [
   [1,0,0,0],
@@ -292,7 +292,7 @@ function Init(CubeSize) {
   [0,0,1,0],
   [0,0,0,1]
   ];
-  
+
   // entity matrix
   I = [
   [1,0,0,0],
@@ -300,7 +300,7 @@ function Init(CubeSize) {
   [0,0,1,0],
   [0,0,0,1]
   ];
-  
+
   // create qube
   Q[0] = new CreateP(-CubeSize,-CubeSize, CubeSize);
   Q[1] = new CreateP(-CubeSize, CubeSize, CubeSize);
@@ -310,24 +310,24 @@ function Init(CubeSize) {
   Q[5] = new CreateP(-CubeSize, CubeSize,-CubeSize);
   Q[6] = new CreateP( CubeSize, CubeSize,-CubeSize);
   Q[7] = new CreateP( CubeSize,-CubeSize,-CubeSize);
-  
+
   // center of gravity
   Q[8] = new CreateP(0, 0, 0);
-  
+
   // anti-clockwise edge check
   Q.Edge = [[0,1,2],[3,2,6],[7,6,5],[4,5,1],[4,0,3],[1,5,6]];
-  
+
   // calculate squad normals
   Q.Normal = new Array();
   for (var i = 0; i < Q.Edge.length; i++) Q.Normal[i] = CalcNormal(Q[Q.Edge[i][0]].V, Q[Q.Edge[i][1]].V, Q[Q.Edge[i][2]].V);
-  
+
   // line drawn ?
   Q.Line = [false,false,false,false,false,false,false,false,false,false,false,false];
-  
+
   // create line pixels
   Q.NumPx = 9 * 2 * CubeSize;
   for (var i = 0; i < Q.NumPx; i++) CreateP(0,0,0);
-  
+
   MTrans = Translate(MTrans, Origin.V[0], Origin.V[1], Origin.V[2]);
   MQube = MMulti(MTrans, MQube);
 
@@ -338,7 +338,7 @@ function Init(CubeSize) {
   DrawQube();
   Testing.Init = true;
   Loop();
-  
+
   // Perform a simple sum-based verification.
   var sum = 0;
   for (var i = 0; i < Q.length; ++i) {
@@ -350,9 +350,18 @@ function Init(CubeSize) {
     throw "Error: bad vector sum for CubeSize = " + CubeSize + "; expected " + validation[CubeSize] + " but got " + sum;
 }
 
+// Time before
+var date = new Date();
+var before = date.getTime();
+
 for ( var i = 20; i <= 260000; i *= 2 ) {
   Init(i);
 }
+
+// Time after
+var after = (new Date()).getTime();
+var diff = after - before;
+print("Time in ms " + diff);
 
 Q = null;
 MTrans = null;
@@ -362,4 +371,3 @@ Origin = null;
 Testing = null;
 LoopTime = null;
 DisplArea = null;
-
