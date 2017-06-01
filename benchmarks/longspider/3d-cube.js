@@ -2,6 +2,10 @@
 // http://www.speich.net/computer/moztesting/3d.htm
 // Created by Simon Speich
 
+// Time before
+var date = new Date();
+var before = date.getTime();
+
 var Q = new Array();
 var MTrans = new Array();  // transformation matrix
 var MQube = new Array();  // position information of qube
@@ -71,6 +75,7 @@ function DrawLine(From, To) {
   NumPix = Math.round(Q.LastPx + NumPix);
 
   var i = Q.LastPx;
+  var before = (new Date()).getTime();
   for (; i < NumPix; i++) {
     Num += NumAdd;
     if (Num >= Den) {
@@ -81,6 +86,10 @@ function DrawLine(From, To) {
     x += IncX2;
     y += IncY2;
   }
+  var after = (new Date()).getTime();
+  var diff = after - before;
+  print("3d-cube;" + diff);
+
   Q.LastPx = NumPix;
 }
 
@@ -94,13 +103,23 @@ function CalcCross(V0, V1) {
 
 function CalcNormal(V0, V1, V2) {
   var A = new Array();   var B = new Array();
+
+  var before = (new Date()).getTime();
   for (var i = 0; i < 3; i++) {
     A[i] = V0[i] - V1[i];
     B[i] = V2[i] - V1[i];
   }
+  var after = (new Date()).getTime();
+  var diff = after - before;
+  print("3d-cube;" + diff);
+
   A = CalcCross(A, B);
   var Length = Math.sqrt(A[0]*A[0] + A[1]*A[1] + A[2]*A[2]);
+  before = (new Date()).getTime();
   for (var i = 0; i < 3; i++) A[i] = A[i] / Length;
+  after = (new Date()).getTime();
+  diff = after - before;
+  print("3d-cube;" + diff);
   A[3] = 1;
   return A;
 }
@@ -350,18 +369,9 @@ function Init(CubeSize) {
     throw "Error: bad vector sum for CubeSize = " + CubeSize + "; expected " + validation[CubeSize] + " but got " + sum;
 }
 
-// Time before
-var date = new Date();
-var before = date.getTime();
-
 for ( var i = 20; i <= 260000; i *= 2 ) {
   Init(i);
 }
-
-// Time after
-var after = (new Date()).getTime();
-var diff = after - before;
-print("Time in ms " + diff);
 
 Q = null;
 MTrans = null;
@@ -371,3 +381,8 @@ Origin = null;
 Testing = null;
 LoopTime = null;
 DisplArea = null;
+
+// Global Time after
+var after = (new Date()).getTime();
+var diff = after - before;
+print("3d-cube;" + diff);
