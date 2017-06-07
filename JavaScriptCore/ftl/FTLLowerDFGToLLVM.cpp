@@ -122,6 +122,7 @@ public:
     {
     }
 
+#ifdef JSCPOLLY
     // BEGIN JSCPOLLY
     void set_string(LValue dest, const char* s) {
     	size_t idx = 0;
@@ -153,6 +154,7 @@ public:
     	m_out.set(cv, buildGEP(m_out.m_builder, dest, indices, 2));
     }
     // END JSCPOLLY
+#endif
 
     void lower()
     {
@@ -228,6 +230,7 @@ public:
             m_out.voidType, m_out.stackmapIntrinsic(), m_out.constInt64(m_ftlState.capturedStackmapID),
             m_out.int32Zero, capturedAlloca);
 
+#ifdef JSCPOLLY
         // BEGIN JSCPOLLY
         if (Options::jscpollyDumpLLVMRT()) {
         	LValue stringAlloca = m_out.alloca(arrayType(m_out.int8, name.length() + 1));
@@ -238,6 +241,7 @@ public:
         	m_out.call(m_out.int32, m_out.printfIntrinsic(), buildGEP(m_out.m_builder, stringAlloca, indices, 2));
         }
         // END JSCPOLLY
+#endif
 
 #endif // FTL_USE_B3
 
