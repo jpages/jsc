@@ -36,11 +36,15 @@ function morph(a, f) {
     var sin = Math.sin
     var f30 = -(50 * sin(f*Math.PI*2))
 
+    var before = (new Date()).getTime();
     for (var i = 0; i < nz; ++i) {
         for (var j = 0; j < nx; ++j) {
             a[3*(i*nx+j)+1]    = sin((j-1) * PI2nx ) * -f30
         }
     }
+    var after = (new Date()).getTime();
+    var diff = after - before;
+    print("3d-morph;" + diff);
 }
 
 
