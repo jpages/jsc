@@ -8,7 +8,7 @@ function test(p)
     }
 }
 
-var N = 1000000
+var N = 10000000
 var flat_pixels = [];
 for (var i = 0; i < N; i++) {
     flat_pixels[i] = i
