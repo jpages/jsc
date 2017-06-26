@@ -3,7 +3,7 @@ function test(p)
 //    print("starting test " +  test_cpt)
     for (var i = 0; i < N; i++) {
 	for (var j = 0; j < N; j++) {
-	    idx = i*N+j
+	    var idx = i*N+j
 	    p[idx] += 666666
 	}
 //        if ((i + 1) % (N / 5) == 0) {
