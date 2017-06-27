@@ -697,7 +697,8 @@ static void fixFunctionBasedOnStackMaps(
             OSRExit& exit = state.jitCode->osrExit[i];
 
             if (verboseCompilationEnabled())
-                dataLog("Handling OSR stackmap #", exit.m_descriptor.m_stackmapID, " for ", exit.m_codeOrigin, "\n");
+                dataLog("Handling OSR stackmap #", exit.m_descriptor.m_stackmapID, " for ",
+                		exit.m_codeOrigin, " of kind ", exitKindToString(exit.m_kind), "\n");
 
             info.m_thunkAddress = linkBuffer->locationOf(info.m_thunkLabel);
             exit.m_patchableCodeOffset = linkBuffer->offsetOf(info.m_thunkJump);
@@ -1183,7 +1184,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
             llvm->initializePollyPasses(*reinterpret_cast<llvm::PassRegistry*>(passRegistry));
 #endif
 
-            llvm->AddTargetData(targetData, modulePasses);
+            //llvm->AddTargetData(targetData, modulePasses);
             llvm->AddAnalysisPasses(targetMachine, modulePasses);
             llvm->AddPromoteMemoryToRegisterPass(modulePasses);
             llvm->AddGlobalOptimizerPass(modulePasses);
@@ -1221,7 +1222,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
             functionPasses = llvm->CreateFunctionPassManagerForModule(module);
             modulePasses = llvm->CreatePassManager();
 
-            llvm->AddTargetData(llvm->GetExecutionEngineTargetData(engine), modulePasses);
+            //llvm->AddTargetData(llvm->GetExecutionEngineTargetData(engine), modulePasses);
 
             llvm->PassManagerBuilderPopulateFunctionPassManager(passBuilder, functionPasses);
             llvm->PassManagerBuilderPopulateModulePassManager(passBuilder, modulePasses);

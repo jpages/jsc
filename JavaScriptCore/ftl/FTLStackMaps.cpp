@@ -61,6 +61,14 @@ void StackMaps::StackSize::parse(StackMaps::ParseContext& context)
         size = context.view->read<uint32_t>(context.offset, true);
         break;
         
+    // JSCPOLLY BEGIN
+    case 2:
+    	functionOffset = context.view->read<uint64_t>(context.offset, true);
+    	size = context.view->read<uint64_t>(context.offset, true);
+    	recordCount = context.view->read<uint64_t>(context.offset, true);
+    	break;
+    // JSCPOLLY END
+
     default:
         functionOffset = context.view->read<uint64_t>(context.offset, true);
         size = context.view->read<uint64_t>(context.offset, true);

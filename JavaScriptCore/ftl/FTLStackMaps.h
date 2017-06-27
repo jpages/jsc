@@ -58,6 +58,12 @@ struct StackMaps {
         uint64_t functionOffset;
         uint64_t size;
 
+        // JSCPOLLY BEGIN
+        // This field has been added
+        // in stackmap version 2 with LLVM 4.0.0
+        uint64_t recordCount;
+        // JSCPOLLY END
+
         void parse(ParseContext&);
         void dump(PrintStream&) const;
     };

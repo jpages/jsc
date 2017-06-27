@@ -970,7 +970,9 @@ if (ENABLE_FTL_JIT)
     # Adding polly libraries dependencies
     MESSAGE( STATUS "LLVM LIBDIR " ${LLVM_LIB_DIR})
     target_link_libraries(llvmForJSC ${LLVM_LIB_DIR}/libPolly.a)
+    target_link_libraries(llvmForJSC ${LLVM_LIB_DIR}/libPollyISL.a)
     target_link_libraries(llvmForJSC ${LLVM_LIB_DIR}/libLLVMSupport.a)
+    #target_link_libraries(llvmForJSC ${LLVM_LIB_DIR}/libPollyPPCG.a)
 
     # Added extra items for JavaScriptCore
     list(APPEND JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES

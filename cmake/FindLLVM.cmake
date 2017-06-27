@@ -8,7 +8,7 @@
 #  LLVM_STATIC_LIBRARIES - list of paths for the static llvm libraries.
 
 
-foreach (_program_name llvm-config llvm-config-3.7 llvm-config-3.6 llvm-config-3.5)
+foreach (_program_name llvm-config llvm-config-4.0 llvm-config-3.7 llvm-config-3.6 llvm-config-3.5)
     find_program(LLVM_CONFIG_EXE NAMES ${_program_name})
     if (LLVM_CONFIG_EXE)
         execute_process(COMMAND ${LLVM_CONFIG_EXE} --version OUTPUT_VARIABLE LLVM_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)

@@ -135,7 +135,6 @@
     macro(LLVMBool, FinalizeFunctionPassManager, (LLVMPassManagerRef FPM)) \
     macro(void, DisposePassManager, (LLVMPassManagerRef PM)) \
     macro(LLVMBool, StartMultithreaded, ()) \
-    macro(void, AddTargetData, (LLVMTargetDataRef, LLVMPassManagerRef)) \
     macro(char *, CopyStringRepOfTargetData, (LLVMTargetDataRef)) \
     macro(LLVMTypeRef, IntPtrType, (LLVMTargetDataRef)) \
     macro(void, LinkInMCJIT, (void)) \
