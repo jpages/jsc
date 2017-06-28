@@ -9326,7 +9326,13 @@ private:
 
         emitOSRExitCall(exitDescriptor, lowValue);
 
+        // BEGIN JSCPOLLY, branch osr exit block to have SESE regions
+#ifdef JSCPOLLY
+        m_out.jump(continuation);
+#else
         m_out.unreachable();
+#endif
+        // END JSCPOLLY
 
         m_out.appendTo(continuation, lastNext);
 #endif // FTL_USES_B3
