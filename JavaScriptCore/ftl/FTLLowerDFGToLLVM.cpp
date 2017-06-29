@@ -9307,7 +9307,7 @@ private:
         // JSCPOLLY
         // TODO: For now, consider the executed code to be stable enough to not put OSR exit for another
         // reason than exiting the function call
-        return;
+        //return;
 #endif
 
         LBasicBlock lastNext = nullptr;
