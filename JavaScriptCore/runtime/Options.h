@@ -109,7 +109,10 @@ typedef const char* optionString;
     v(bool, useDFGJIT, true, "allows the DFG JIT to be used if true\n") \
     v(bool, useRegExpJIT, true, "allows the RegExp JIT to be used if true\n") \
     \
+    v(bool, jscpolly, false, "enable polly in LLVM passes\n") \
     v(bool, jscpollyDumpLLVMRT, false, "dumps llvm runtime behavior\n") \
+    v(bool, jscpollyUseStackmaps, true, "enable/disable generation of stackmaps in LLVM code\n") \
+	v(bool, jscpollyDumpOSRExit, false, "dump each OSR exit from LLVM code\n") \
 	\
     v(bool, reportMustSucceedExecutableAllocations, false, nullptr) \
     \

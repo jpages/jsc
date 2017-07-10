@@ -144,6 +144,10 @@ static void dumpDataSection(DataSection* section, const char* prefix)
     }
 }
 
+/**
+ * Get the offset of the stackmap region identified by stackmapID
+ * in the stackmaps section
+ */
 static int offsetOfStackRegion(StackMaps::RecordMap& recordMap, uint32_t stackmapID)
 {
     if (stackmapID == UINT_MAX)
@@ -563,6 +567,7 @@ static void fixFunctionBasedOnStackMaps(
 
     ExceptionHandlerManager exceptionHandlerManager(state);
 
+    // Get offests of several stackmap records
     int localsOffset = offsetOfStackRegion(recordMap, state.capturedStackmapID) + graph.m_nextMachineLocal;
     int varargsSpillSlotsOffset = offsetOfStackRegion(recordMap, state.varargsSpillSlotsStackmapID);
     int jsCallThatMightThrowSpillOffset = offsetOfStackRegion(recordMap, state.exceptionHandlingSpillSlotStackmapID);
@@ -619,6 +624,9 @@ static void fixFunctionBasedOnStackMaps(
         state.finalizer->handleExceptionsLinkBuffer = WTF::move(linkBuffer);
     }
 
+
+    // Iterate over orsDescriptors added when lowering DFG to FTl
+    // todo something, but what ? //TODO JSCPOLLY
     RELEASE_ASSERT(state.jitCode->osrExit.size() == 0);
     for (unsigned i = 0; i < state.jitCode->osrExitDescriptors.size(); i++) {
         OSRExitDescriptor& exitDescriptor = state.jitCode->osrExitDescriptors[i];
@@ -676,6 +684,8 @@ static void fixFunctionBasedOnStackMaps(
             }
         }
     }
+
+
     ExitThunkGenerator exitThunkGenerator(state);
     exitThunkGenerator.emitThunks(jsCallThatMightThrowSpillOffset);
     if (exitThunkGenerator.didThings()) {
@@ -1168,21 +1178,22 @@ void compile(State& state, Safepoint::Result& safepointResult)
         LLVMPassManagerRef functionPasses = 0;
         LLVMPassManagerRef modulePasses;
 
-#ifdef JSCPOLLY
+
         // JSCPOLLY BEGIN
         LLVMPassRegistryRef passRegistry;
         // JSCPOLLY END
-#endif
 
         if (Options::llvmSimpleOpt()) {
             modulePasses = llvm->CreatePassManager();
             functionPasses = llvm->CreateFunctionPassManagerForModule(module);
 
-#ifdef JSCPOLLY
-            // Intialize LLVM passes used by Polly
-            passRegistry = llvm->GetGlobalPassRegistry();
-            llvm->initializePollyPasses(*reinterpret_cast<llvm::PassRegistry*>(passRegistry));
-#endif
+            // BEGIN JSCPOLLY
+            if (Options::jscpolly()) {
+				// Intialize LLVM passes used by Polly
+				passRegistry = llvm->GetGlobalPassRegistry();
+				llvm->initializePollyPasses(*reinterpret_cast<llvm::PassRegistry*>(passRegistry));
+            }
+            // END JSCPOLLY
 
             //llvm->AddTargetData(targetData, modulePasses);
             llvm->AddAnalysisPasses(targetMachine, modulePasses);
@@ -1205,12 +1216,12 @@ void compile(State& state, Safepoint::Result& safepointResult)
             if (enableLLVMFastISel)
                 llvm->AddLowerSwitchPass(modulePasses);
 
-#ifdef JSCPOLLY
-            // JSCPOLLY BEGIN
-            llvm->registerPollyPasses(*reinterpret_cast<llvm::legacy::PassManager*>(modulePasses));
-            //llvm->DumpModule(module);
-            // JSCPOLLY END
-#endif
+			// JSCPOLLY BEGIN
+            if (Options::jscpolly()) {
+				llvm->registerPollyPasses(*reinterpret_cast<llvm::legacy::PassManager*>(modulePasses));
+            }
+			// JSCPOLLY END
+
             llvm->RunPassManager(modulePasses, module);
 
         } else {
@@ -1287,8 +1298,10 @@ void compile(State& state, Safepoint::Result& safepointResult)
     }
     state.graph.m_codeBlock->setCalleeSaveRegisters(WTF::move(registerOffsets));
 
+    // We need to do something with stackmaps
     if (state.stackmapsSection && state.stackmapsSection->size()) {
-        if (shouldDumpDisassembly()) {
+
+    	if (shouldDumpDisassembly()) {
             dataLog(
                 "Generated LLVM stackmaps section for ",
                 CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT), ":\n");

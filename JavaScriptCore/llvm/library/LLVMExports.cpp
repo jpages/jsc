@@ -132,19 +132,16 @@ extern "C" JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(
     FOR_EACH_LLVM_API_FUNCTION(LLVM_API_FUNCTION_ASSIGNMENT);
 #undef LLVM_API_FUNCTION_ASSIGNMENT
 
-#ifdef JSCPOLLY
     // JSCPOLLY BEGIN
-    result->BuildGEP = LLVMBuildGEP;
-    result->BuildInBoundsGEP = LLVMBuildInBoundsGEP;
+	result->BuildGEP = LLVMBuildGEP;
+	result->BuildInBoundsGEP = LLVMBuildInBoundsGEP;
 
-    // Polly passes
-    result->GetGlobalPassRegistry = LLVMGetGlobalPassRegistry;
-    result->initializePollyPasses = polly::initializePollyPasses;
-    result->registerPollyPasses = polly::registerPollyPasses;
-    result->registerCanonicalicationPasses = polly::registerCanonicalicationPasses;
-
+	// Polly passes
+	result->GetGlobalPassRegistry = LLVMGetGlobalPassRegistry;
+	result->initializePollyPasses = polly::initializePollyPasses;
+	result->registerPollyPasses = polly::registerPollyPasses;
+	result->registerCanonicalicationPasses = polly::registerCanonicalicationPasses;
     // JSCPOLLY END
-#endif
 
     // Handle conditionally available functions.
 #if LLVM_VERSION_MAJOR >= 4 || (LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR >= 6)

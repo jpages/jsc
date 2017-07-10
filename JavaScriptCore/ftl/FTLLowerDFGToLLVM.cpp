@@ -74,6 +74,10 @@ namespace {
 
 std::atomic<int> compileCounter;
 
+// Begin JSCPOLLY
+LValue osrExitStringAlloca;
+// End JSCPOLLY
+
 #if ASSERT_DISABLED
 NO_RETURN_DUE_TO_CRASH static void ftlUnreachable()
 {
@@ -122,7 +126,6 @@ public:
     {
     }
 
-#ifdef JSCPOLLY
     // BEGIN JSCPOLLY
     void set_string(LValue dest, const char* s) {
     	size_t idx = 0;
@@ -141,20 +144,19 @@ public:
 
     	// Set \n
     	LValue cv = m_out.constInt8('\n');
-    	LValue indices[2];
-    	indices[0] = m_out.constInt32(0);
-    	indices[1] = m_out.constInt32(idx);
-    	m_out.set(cv, buildGEP(m_out.m_builder, dest, indices, 2));
+    	LValue indicesLineBreak[2];
+    	indicesLineBreak[0] = m_out.constInt32(0);
+    	indicesLineBreak[1] = m_out.constInt32(idx);
+    	m_out.set(cv, buildGEP(m_out.m_builder, dest, indicesLineBreak, 2));
     	idx++;
 
     	cv = m_out.constInt8('\0');
-    	indices[2];
-    	indices[0] = m_out.constInt32(0);
-    	indices[1] = m_out.constInt32(idx);
-    	m_out.set(cv, buildGEP(m_out.m_builder, dest, indices, 2));
+    	LValue indicesNull[2];
+    	indicesNull[0] = m_out.constInt32(0);
+    	indicesNull[1] = m_out.constInt32(idx);
+    	m_out.set(cv, buildGEP(m_out.m_builder, dest, indicesNull, 2));
     }
     // END JSCPOLLY
-#endif
 
     void lower()
     {
@@ -230,7 +232,6 @@ public:
             m_out.voidType, m_out.stackmapIntrinsic(), m_out.constInt64(m_ftlState.capturedStackmapID),
             m_out.int32Zero, capturedAlloca);
 
-#ifdef JSCPOLLY
         // BEGIN JSCPOLLY
         if (Options::jscpollyDumpLLVMRT()) {
         	LValue stringAlloca = m_out.alloca(arrayType(m_out.int8, name.length() + 1));
@@ -241,7 +242,14 @@ public:
         	m_out.call(m_out.int32, m_out.printfIntrinsic(), buildGEP(m_out.m_builder, stringAlloca, indices, 2));
         }
         // END JSCPOLLY
-#endif
+
+        // BEGIN JSCPOLLY
+        if (Options::jscpollyDumpOSRExit()) {
+        	CString osrS = toCString("OSR exit with kind %d");
+        	osrExitStringAlloca = m_out.alloca(arrayType(m_out.int8, osrS.length() + 1));
+        	set_string(osrExitStringAlloca, osrS.data());
+        }
+        // END JSCPOLLY
 
 #endif // FTL_USE_B3
 
@@ -2724,52 +2732,51 @@ private:
             IndexedAbstractHeap& heap = m_node->arrayMode().type() == Array::Int32 ?
                 m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
 
-#ifdef JSCPOLLY
-            // Do the intoptr instruction in the current block
-          	TypedPointer pointer = basePtr(heap, storage, index, m_node->child2());
+            // BEGIN JSCPOLLY
+            if (Options::jscpolly()) {
+				// Do the intoptr instruction in the current block
+				TypedPointer pointer = basePtr(heap, storage, index, m_node->child2());
 
-            // And create a new block to do the load
-          	LBasicBlock getblock = FTL_NEW_BLOCK(m_out, ("getblock"));
-          	m_out.jump(getblock);
-        	m_out.appendTo(getblock);
+				// And create a new block to do the load
+				LBasicBlock getblock = FTL_NEW_BLOCK(m_out, ("getblock"));
+				m_out.jump(getblock);
+				m_out.appendTo(getblock);
 
-            // The accessed value is in the array, no need to reallocate
-            if (m_node->arrayMode().isInBounds()) {
-                LValue result = m_out.loadArray(pointer, index, provenValue(m_node->child2()));
+				// The accessed value is in the array, no need to reallocate
+				if (m_node->arrayMode().isInBounds()) {
+					LValue result = m_out.loadArray(pointer, index, provenValue(m_node->child2()));
 
-#ifdef JSCPOLLY
-                // Removed  test when load from hole in an array
-                setJSValue(result);
-                return;
-#else
-				// Test whether the accessed value is a hole in the array or not
-				LValue isHole = m_out.isZero64(result);
-				if (m_node->arrayMode().isSaneChain()) {
-					DFG_ASSERT(
-						m_graph, m_node, m_node->arrayMode().type() == Array::Contiguous);
-					result = m_out.select(
-						isHole, m_out.constInt64(JSValue::encode(jsUndefined())), result);
-				} else
-					speculate(LoadFromHole, noValue(), 0, isHole);
-				setJSValue(result);
-				return;
-#endif
-            }
-#else
-			if (m_node->arrayMode().isInBounds()) {
-				LValue result = m_out.load64(baseIndex(heap, storage, index, m_node->child2()));
-				LValue isHole = m_out.isZero64(result);
-				if (m_node->arrayMode().isSaneChain()) {
-					DFG_ASSERT(
+					// Test whether the accessed value is a hole in the array or not
+					LValue isHole = m_out.isZero64(result);
+					if (m_node->arrayMode().isSaneChain()) {
+						DFG_ASSERT(
 							m_graph, m_node, m_node->arrayMode().type() == Array::Contiguous);
-					result = m_out.select(
+						result = m_out.select(
 							isHole, m_out.constInt64(JSValue::encode(jsUndefined())), result);
-				} else
-				speculate(LoadFromHole, noValue(), 0, isHole);
-				setJSValue(result);
-				return;
+					} else
+						speculate(LoadFromHole, noValue(), 0, isHole);
+					setJSValue(result);
+					return;
+				}
+            }
+			else {
+			// END JSCPOLLY
+
+				if (m_node->arrayMode().isInBounds()) {
+					LValue result = m_out.load64(baseIndex(heap, storage, index, m_node->child2()));
+					LValue isHole = m_out.isZero64(result);
+					if (m_node->arrayMode().isSaneChain()) {
+						DFG_ASSERT(
+								m_graph, m_node, m_node->arrayMode().type() == Array::Contiguous);
+						result = m_out.select(
+								isHole, m_out.constInt64(JSValue::encode(jsUndefined())), result);
+					} else
+					speculate(LoadFromHole, noValue(), 0, isHole);
+					setJSValue(result);
+					return;
+				}
 			}
-#endif
+
 
             // The value is not in bounds, reallocate the array to get it
             LValue base = lowCell(m_node->child1());
@@ -3112,57 +3119,61 @@ private:
                 if (m_node->arrayMode().type() == Array::Int32)
                     FTL_TYPE_CHECK(jsValueValue(value), child3, SpecInt32, isNotInt32(value));
 
-#ifdef JSCPOLLY
-                IndexedAbstractHeap& heap = m_node->arrayMode().type() == Array::Int32 ?
-                        m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
+                // BEGIN JSCPOLLY
+                if (Options::jscpolly()) {
+					IndexedAbstractHeap& heap = m_node->arrayMode().type() == Array::Int32 ?
+							m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
 
-                // JSCPOLLY added block name
-                LBasicBlock storeblock = FTL_NEW_BLOCK(m_out, ("storeblock"));
-                m_out.jump(storeblock);
-                m_out.appendTo(storeblock);
+					// added block name
+					LBasicBlock storeblock = FTL_NEW_BLOCK(m_out, ("storeblock"));
+					m_out.jump(storeblock);
+					m_out.appendTo(storeblock);
 
-                // Do the intoptr instruction in the current block
-                TypedPointer baseArray = m_out.baseArray(heap, storage, m_out.zeroExtPtr(index), provenValue(child2));
+					// Do the intoptr instruction in the current block
+					TypedPointer baseArray = m_out.baseArray(heap, storage, m_out.zeroExtPtr(index), provenValue(child2));
 
-                // And create a new block to do the store
-                // JSCPOLLY added block name
-              	LBasicBlock putblock = FTL_NEW_BLOCK(m_out, ("putblock"));
-              	m_out.jump(putblock);
-            	m_out.appendTo(putblock);
+					// And create a new block to do the store
+					// added block name
+					LBasicBlock putblock = FTL_NEW_BLOCK(m_out, ("putblock"));
+					m_out.jump(putblock);
+					m_out.appendTo(putblock);
 
-                if (m_node->op() == PutByValAlias) {
-                    m_out.storeArray(value, baseArray, index);
-                    break;
+					if (m_node->op() == PutByValAlias) {
+						m_out.storeArray(value, baseArray, index);
+						break;
+					}
+
+					contiguousPutByValOutOfBounds(
+						codeBlock()->isStrictMode()
+						? operationPutByValBeyondArrayBoundsStrict
+						: operationPutByValBeyondArrayBoundsNonStrict,
+						base, storage, index, value, continuation);
+
+					m_out.storeArray(value, baseArray, index);
+					break;
                 }
+                else {
+                // END JSCPOLLY
 
-                contiguousPutByValOutOfBounds(
-                    codeBlock()->isStrictMode()
-                    ? operationPutByValBeyondArrayBoundsStrict
-                    : operationPutByValBeyondArrayBoundsNonStrict,
-                    base, storage, index, value, continuation);
+					TypedPointer elementPointer = m_out.baseIndex(
+						m_node->arrayMode().type() == Array::Int32 ?
+						m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties,
+						storage, m_out.zeroExtPtr(index), provenValue(child2));
 
-                m_out.storeArray(value, baseArray, index);
-                break;
-#else
-                TypedPointer elementPointer = m_out.baseIndex(
-					m_node->arrayMode().type() == Array::Int32 ?
-					m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties,
-					storage, m_out.zeroExtPtr(index), provenValue(child2));
+					if (m_node->op() == PutByValAlias) {
+						m_out.store64(value, elementPointer);
+						break;
+					}
 
-				if (m_node->op() == PutByValAlias) {
+					contiguousPutByValOutOfBounds(
+						codeBlock()->isStrictMode()
+						? operationPutByValBeyondArrayBoundsStrict
+						: operationPutByValBeyondArrayBoundsNonStrict,
+						base, storage, index, value, continuation);
+
 					m_out.store64(value, elementPointer);
 					break;
-				}
-
-				contiguousPutByValOutOfBounds(
-					codeBlock()->isStrictMode()
-					? operationPutByValBeyondArrayBoundsStrict
-					: operationPutByValBeyondArrayBoundsNonStrict,
-					base, storage, index, value, continuation);
-
-				m_out.store64(value, elementPointer);
-				break;
-#endif
+                }
             }
 
             case Array::Double: {
@@ -6702,14 +6713,14 @@ private:
             m_out.constInt32(FastTypedArray));
     }
 
-#ifdef JSCPOLLY
+    // BEGIN JSCPOLLY
     // Generate a pointer to the base of the array
     TypedPointer basePtr(IndexedAbstractHeap& heap, LValue storage, LValue index, Edge edge, ptrdiff_t offset = 0)
 	{
 		return m_out.baseArray(
 			heap, storage, m_out.zeroExtPtr(index), provenValue(edge), offset);
 	}
-#endif
+    // END JSCPOLLY
 
     TypedPointer baseIndex(IndexedAbstractHeap& heap, LValue storage, LValue index, Edge edge, ptrdiff_t offset = 0)
     {
@@ -9255,6 +9266,8 @@ private:
             availabilityMap().m_locals.numberOfLocals()));
     }
 
+    // Append an OSRExitDescriptor to m_ftlState.jitCode object
+    // and generate a call to stackmapintrinsic
     void appendOSRExit(
         ExitKind kind, FormattedValue lowValue, Node* highValue, LValue failCondition,
         NodeOrigin origin, bool isExceptionHandler = false)
@@ -9295,46 +9308,82 @@ private:
         blessSpeculation(
             m_out.speculate(failCondition), kind, lowValue, highValue, origin, isExceptionHandler);
 #else // FTL_USES_B3
+
+        // BEGIN JSCPOLLY
+        if (!Options::jscpollyUseStackmaps()) {
+        	return;
+        }
+        // END JSCPOLLY
+
+        // Store the exit descriptor in m_ftlState.jitCode object
         appendOSRExitDescriptor(kind, isExceptionHandler ? ExceptionType::CCallException : ExceptionType::None, lowValue, highValue, origin);
         OSRExitDescriptor& exitDescriptor = m_ftlState.jitCode->osrExitDescriptors.last();
 
+        // If exit condition is always true, then no need to branch
         if (failCondition == m_out.booleanTrue) {
+
+            // BEGIN JSCPOLLY
+            if (Options::jscpollyDumpOSRExit()) {
+            	LValue indices[2];
+            	indices[0] = m_out.constInt32(0);
+            	indices[1] = m_out.constInt32(0);
+            	m_out.call(m_out.int32,
+            			m_out.printfIntrinsic(),
+            			buildGEP(m_out.m_builder, osrExitStringAlloca, indices, 2),
+    					m_out.constInt32(kind));
+            }
+            // END JSCPOLLY
+
             emitOSRExitCall(exitDescriptor, lowValue);
             return;
         }
 
-#ifdef JSCPOLLY
-        // JSCPOLLY
-        // TODO: For now, consider the executed code to be stable enough to not put OSR exit for another
-        // reason than exiting the function call
-        //return;
-#endif
+        // Else we need to create a block and branch on it if condition is true
+        else {
+			LBasicBlock lastNext = nullptr;
+			LBasicBlock continuation = nullptr;
 
-        LBasicBlock lastNext = nullptr;
-        LBasicBlock continuation = nullptr;
+			// JSCPOLLY
+			// Added exit kind string in block name to better understand the IR
+			// when looking at it in the eyes. To see block names in the generated
+			// IR, the --verboseCompilation=true must be specified to jsc
+			LBasicBlock failCase = FTL_NEW_BLOCK(m_out, ("OSR exit failCase for ", m_node, " because of ", exitKindToString(kind)));
+			continuation = FTL_NEW_BLOCK(m_out, ("OSR exit continuation for ", m_node));
 
-        // JSCPOLLY
-        // Added exit kind string in block name to better understand the IR
-        // when looking at it in the eyes. To see block names in the generated
-        // IR, the --verboseCompilation=true must be specified to jsc
-        LBasicBlock failCase = FTL_NEW_BLOCK(m_out, ("OSR exit failCase for ", m_node, " because of ", exitKindToString(kind)));
-        continuation = FTL_NEW_BLOCK(m_out, ("OSR exit continuation for ", m_node));
+			m_out.branch(failCondition, rarely(failCase), usually(continuation));
 
-        m_out.branch(failCondition, rarely(failCase), usually(continuation));
+			lastNext = m_out.appendTo(failCase, continuation);
 
-        lastNext = m_out.appendTo(failCase, continuation);
+	        // BEGIN JSCPOLLY
+	        if (Options::jscpollyDumpOSRExit()) {
+	        	LValue indices[2];
+	        	indices[0] = m_out.constInt32(0);
+	        	indices[1] = m_out.constInt32(0);
+	        	m_out.call(m_out.int32,
+	        			m_out.printfIntrinsic(),
+	        			buildGEP(m_out.m_builder, osrExitStringAlloca, indices, 2),
+						m_out.constInt32(kind));
+	        }
+	        // END JSCPOLLY
 
-        emitOSRExitCall(exitDescriptor, lowValue);
+			emitOSRExitCall(exitDescriptor, lowValue);
 
-        // BEGIN JSCPOLLY, branch osr exit block to have SESE regions
-#ifdef JSCPOLLY
-        m_out.jump(continuation);
-#else
-        m_out.unreachable();
-#endif
-        // END JSCPOLLY
+            // BEGIN JSCPOLLY
+            if (Options::jscpollyDumpOSRExit()) {
+            	LValue indices[2];
+            	indices[0] = m_out.constInt32(0);
+            	indices[1] = m_out.constInt32(0);
+            	m_out.call(m_out.int32,
+            			m_out.printfIntrinsic(),
+            			buildGEP(m_out.m_builder, osrExitStringAlloca, indices, 2),
+    					m_out.constInt32(kind));
+            }
+            // END JSCPOLLY
 
-        m_out.appendTo(continuation, lastNext);
+            m_out.unreachable();
+
+			m_out.appendTo(continuation, lastNext);
+        }
 #endif // FTL_USES_B3
     }
 
@@ -9444,6 +9493,7 @@ private:
 #if !FTL_USES_B3
     void callStackmap(OSRExitDescriptor& exitDescriptor, StackmapArgumentList& arguments)
     {
+
         exitDescriptor.m_stackmapID = m_stackmapIDs++;
         arguments.insert(0, m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
         arguments.insert(0, m_out.constInt64(exitDescriptor.m_stackmapID));

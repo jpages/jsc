@@ -1324,10 +1324,10 @@ set_target_properties(JavaScriptCore PROPERTIES COMPILE_DEFINITIONS "BUILDING_Ja
 set_target_properties(JavaScriptCore PROPERTIES FOLDER "JavaScriptCore")
 
 # JSCPOLLY BEGIN
-if(ENABLE_FTL_JIT_POLLY)
+#if(ENABLE_FTL_JIT_POLLY)
   target_compile_definitions(JavaScriptCore PRIVATE "JSCPOLLY")
   target_compile_definitions(llvmForJSC PRIVATE "JSCPOLLY")
-endif()
+#endif()
 # JSCPOLLY END
 
 if (JavaScriptCore_POST_BUILD_COMMAND)

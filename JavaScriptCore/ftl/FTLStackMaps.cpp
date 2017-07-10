@@ -62,6 +62,7 @@ void StackMaps::StackSize::parse(StackMaps::ParseContext& context)
         break;
         
     // JSCPOLLY BEGIN
+    // PORT to version 2 of stackmaps in LLVM 4.0
     case 2:
     	functionOffset = context.view->read<uint64_t>(context.offset, true);
     	size = context.view->read<uint64_t>(context.offset, true);
