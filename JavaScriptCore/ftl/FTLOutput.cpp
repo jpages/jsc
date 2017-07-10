@@ -91,11 +91,11 @@ LValue Output::sensibleDoubleToInt(LValue value)
 LValue Output::load(TypedPointer pointer, LType refType)
 {
     LValue result = get(intToPtr(pointer.value(), refType));
-    pointer.heap().decorateInstruction(result, *m_heaps);
+    pointer.heap().decorateInstruction(result, *m_heaps, this);
     return result;
 }
 
-#ifdef JSCPOLLY
+// BEGIN JSCPOLLY
 /* baseArray points to the beginning of the array */
 LValue Output::loadArray(TypedPointer baseArray, LValue index, JSValue value)
 {
@@ -108,20 +108,20 @@ LValue Output::loadArray(TypedPointer baseArray, LValue index, JSValue value)
 	//Generate a GEP to do the pointer arithmetic
 	result = get(buildGEP(m_builder, baseArray.value(), indices, 2));
 
-	baseArray.heap().decorateInstruction(result, *m_heaps);
+	baseArray.heap().decorateInstruction(result, *m_heaps, this);
     return result;
 }
-#endif
+// END JSCPOLLY
 
 void Output::store(LValue value, TypedPointer pointer, LType refType)
 {
     if (refType == refFloat)
         value = buildFPCast(m_builder, value, floatType);
     LValue result = set(value, intToPtr(pointer.value(), refType));
-    pointer.heap().decorateInstruction(result, *m_heaps);
+    pointer.heap().decorateInstruction(result, *m_heaps, this);
 }
 
-#ifdef JSCPOLLY
+// BEGIN JSCPOLLY
 void Output::storeArray(LValue value, TypedPointer baseArray, LValue index)
 {
 	LValue result;
@@ -133,9 +133,9 @@ void Output::storeArray(LValue value, TypedPointer baseArray, LValue index)
 	//Generate a GEP to do the pointer arithmetic
 	result = set(value, buildGEP(m_builder, baseArray.value(), indices, 2));
 
-	baseArray.heap().decorateInstruction(result, *m_heaps);
+	baseArray.heap().decorateInstruction(result, *m_heaps, this);
 }
-#endif
+// END JSCPOLLY
 
 LValue Output::baseIndex(LValue base, LValue index, Scale scale, ptrdiff_t offset)
 {

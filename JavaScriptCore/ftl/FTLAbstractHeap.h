@@ -94,16 +94,16 @@ public:
     }
 
 #if !FTL_USES_B3
-    LValue tbaaMetadata(const AbstractHeapRepository& repository) const
+    LValue tbaaMetadata(const AbstractHeapRepository& repository, const Output* out) const
     {
         ASSERT(isInitialized());
         if (LIKELY(!!m_tbaaMetadata))
             return m_tbaaMetadata;
-        return tbaaMetadataSlow(repository);
+        return tbaaMetadataSlow(repository, out);
     }
 #endif
     
-    void decorateInstruction(LValue instruction, const AbstractHeapRepository&) const;
+    void decorateInstruction(LValue instruction, const AbstractHeapRepository&, const Output*) const;
 
     void dump(PrintStream&) const;
 
@@ -111,7 +111,7 @@ private:
     friend class AbstractHeapRepository;
 
 #if !FTL_USES_B3
-    LValue tbaaMetadataSlow(const AbstractHeapRepository&) const;
+    LValue tbaaMetadataSlow(const AbstractHeapRepository&, const Output*) const;
 #endif
     
     AbstractHeap* m_parent;

@@ -41,22 +41,44 @@
 namespace JSC { namespace FTL {
 
 #if !FTL_USES_B3
-LValue AbstractHeap::tbaaMetadataSlow(const AbstractHeapRepository& repository) const
+LValue AbstractHeap::tbaaMetadataSlow(const AbstractHeapRepository& repository, const Output* out) const
 {
     m_tbaaMetadata = mdNode(
         repository.m_context,
         mdString(repository.m_context, m_heapName),
-        m_parent->tbaaMetadata(repository));
+        m_parent->tbaaMetadata(repository, out));
+//    m_tbaaMetadata = mdNode(
+//            repository.m_context,
+//			m_tbaaMetadata_old,
+//			m_tbaaMetadata_old,
+//			const_cast<Output*>(out)->constInt64(0)
+//			);
     return m_tbaaMetadata;
 }
 #endif
 
-void AbstractHeap::decorateInstruction(LValue instruction, const AbstractHeapRepository& repository) const
+
+
+  // Create a MDNode <MD, MD, offset 0>
+ //  Metadata *Elts[] = {&MD, &MD, ConstantAsMetadata::get(Constant::getNullValue(
+                                  //  Type::getInt64Ty(Context)))};
+  //return MDNode::get(Context, Elts);
+
+void AbstractHeap::decorateInstruction(LValue instruction, const AbstractHeapRepository& repository, const Output* out) const
 {
 #if !FTL_USES_B3
     if (!Options::useFTLTBAA())
         return;
-    setMetadata(instruction, repository.m_tbaaKind, tbaaMetadata(repository));
+    LValue oldMD = tbaaMetadata(repository, out);
+    setMetadata(instruction, repository.m_tbaaKind, oldMD);
+	LValue		m_tbaaMetadata = mdNode(
+					repository.m_context,
+					oldMD,
+					oldMD,
+					const_cast<Output*>(out)->constInt64(0)
+			);
+    setMetadata(instruction, repository.m_tbaaKind, m_tbaaMetadata);
+
 #else
     UNUSED_PARAM(instruction);
     UNUSED_PARAM(repository);
@@ -135,7 +157,7 @@ TypedPointer IndexedAbstractHeap::baseIndex(Output& out, LValue base, LValue ind
 TypedPointer IndexedAbstractHeap::baseArray(Output& out, LValue base, LValue index, JSValue indexAsConstant)
 {
 	// The size is not checked by LLVM here
-	LValue result = out.intToPtr(base, pointerType(arrayType(out.int64, 1000)));
+	LValue result = out.intToPtr(base, pointerType(arrayType(out.int64, 10000000)));
 
 	return TypedPointer(atAnyIndex(), result);
 }

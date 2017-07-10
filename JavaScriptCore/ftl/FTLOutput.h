@@ -257,10 +257,10 @@ public:
     LValue load32(TypedPointer pointer) { return load(pointer, ref32); }
     LValue load64(TypedPointer pointer) { return load(pointer, ref64); }
 
-#ifdef JSCPOLLY
+    // BEGIN JSCPOLLY
     // Functions related to loading in arrays
     LValue loadArray(TypedPointer pointer, LValue index, JSValue value);
-#endif
+    // END JSCPOLLY
 
     LValue loadPtr(TypedPointer pointer) { return load(pointer, refPtr); }
     LValue loadFloatToDouble(TypedPointer pointer) { return buildFPCast(m_builder, load(pointer, refFloat), doubleType); }
@@ -272,9 +272,9 @@ public:
     void storePtr(LValue value, TypedPointer pointer) { store(value, pointer, refPtr); }
     void storeDouble(LValue value, TypedPointer pointer) { store(value, pointer, refDouble); }
 
-#ifdef JSCPOLLY
+    // BEGIN JSCPOLLY
     void storeArray(LValue value, TypedPointer pointer, LValue index);
-#endif
+    // END JSCPOLLY
 
     LValue addPtr(LValue value, ptrdiff_t immediate = 0)
     {
@@ -308,13 +308,13 @@ public:
         return heap.baseIndex(*this, base, index, indexAsConstant, offset);
     }
 
-#ifdef JSCPOLLY
+    // BEGIN JSCPOLLY
     // Generate a pointer to the base of the array
     TypedPointer baseArray(IndexedAbstractHeap& heap, LValue base, LValue index, JSValue indexAsConstant = JSValue(), ptrdiff_t offset = 0)
 	{
 		return heap.baseArray(*this, base, index, indexAsConstant);
 	}
-#endif
+    // END JSCPOLLY
 
     TypedPointer absolute(void* address)
     {
