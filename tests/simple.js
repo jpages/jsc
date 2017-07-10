@@ -1,10 +1,8 @@
-function test(p)
+function test(p, N)
 {
     for (var i = 0; i < N; i++) {
 	var val = p[i];
-	val = val + 42;
-	val = val * 2;
-	val = val - 43;
+	val = val + 42
 	p[i] = val;
     }
 }
@@ -15,11 +13,11 @@ for (var i = 0; i < N; i++) {
     flat_pixels[i] = i
 }
 
-test(flat_pixels);
+test(flat_pixels, N);
 print(flat_pixels[777])
-test(flat_pixels);
+test(flat_pixels, N);
 print(flat_pixels[777])
-test(flat_pixels);
+test(flat_pixels, N);
 print(flat_pixels[777])
-test(flat_pixels);
+test(flat_pixels, N + 1);
 print(flat_pixels[777])
