@@ -1212,6 +1212,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
             llvm->AddGVNPass(modulePasses);
             llvm->AddCFGSimplificationPass(modulePasses);
             llvm->AddDeadStoreEliminationPass(modulePasses);
+            llvm->AddLICMPass(modulePasses);
 
             if (enableLLVMFastISel)
                 llvm->AddLowerSwitchPass(modulePasses);

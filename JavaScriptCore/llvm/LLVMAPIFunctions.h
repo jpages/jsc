@@ -165,6 +165,7 @@
     macro(void, AddPruneEHPass, (LLVMPassManagerRef PM)) \
     macro(void, AddGlobalOptimizerPass, (LLVMPassManagerRef PM)) \
     macro(void, AddGVNPass, (LLVMPassManagerRef PM)) \
+	macro(void, AddLICMPass, (LLVMPassManagerRef PM)) \
     macro(void, AddInstructionCombiningPass, (LLVMPassManagerRef PM)) \
     macro(void, AddPromoteMemoryToRegisterPass, (LLVMPassManagerRef PM)) \
     macro(void, AddConstantPropagationPass, (LLVMPassManagerRef PM)) \
