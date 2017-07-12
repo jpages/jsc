@@ -1212,7 +1212,9 @@ void compile(State& state, Safepoint::Result& safepointResult)
             llvm->AddGVNPass(modulePasses);
             llvm->AddCFGSimplificationPass(modulePasses);
             llvm->AddDeadStoreEliminationPass(modulePasses);
+            // JSCPOLLY BEGIN
             llvm->AddLICMPass(modulePasses);
+            // JSCPOLLY END
 
             if (enableLLVMFastISel)
                 llvm->AddLowerSwitchPass(modulePasses);
