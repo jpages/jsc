@@ -3,6 +3,8 @@
 //
 // modified by Isaac Gouy
 
+var before = (new Date()).getTime(); // JSCPOLLY
+
 function pad(number,width){
    var s = number.toString();
    var prefixWidth = width - s.length;
@@ -15,6 +17,7 @@ function pad(number,width){
 function nsieve(m, isPrime){
    var i, k, count;
 
+   var before = (new Date()).getTime(); // JSCPOLLY
    for (i=2; i<=m; i++) { isPrime[i] = true; }
    count = 0;
 
@@ -24,6 +27,7 @@ function nsieve(m, isPrime){
          count++;
       }
    }
+   var diff = (new Date()).getTime() - before;print("access-nseive;" + diff); // JSCPOLLY
    return count;
 }
 
@@ -38,6 +42,8 @@ function sieve() {
 }
 
 var result = sieve();
+
+var diff = (new Date()).getTime() - before;print("access-nseive;" + diff); // JSCPOLLY
 
 var expected = 1430116;
 if (result != expected)

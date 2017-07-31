@@ -23,10 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- // Time before
- var date = new Date();
- var before = date.getTime();
-
 var loops = 3500
 var nx = 120
 var nz = 120
@@ -47,6 +43,9 @@ function morph(a, f) {
     print("3d-morph;" + diff);
 }
 
+// Time before
+var date = new Date();
+var before = date.getTime();
 
 var a = Array()
 for (var i=0; i < nx*nz*3; ++i)

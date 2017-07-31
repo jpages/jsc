@@ -2,9 +2,7 @@
 // http://www.speich.net/computer/moztesting/3d.htm
 // Created by Simon Speich
 
-// Time before
-var date = new Date();
-var before = date.getTime();
+var before = (new Date()).getTime(); // JSCPOLLY
 
 var Q = new Array();
 var MTrans = new Array();  // transformation matrix
@@ -75,7 +73,7 @@ function DrawLine(From, To) {
   NumPix = Math.round(Q.LastPx + NumPix);
 
   var i = Q.LastPx;
-  var before = (new Date()).getTime();
+  var before = (new Date()).getTime(); // JSCPOLLY
   for (; i < NumPix; i++) {
     Num += NumAdd;
     if (Num >= Den) {
@@ -86,9 +84,7 @@ function DrawLine(From, To) {
     x += IncX2;
     y += IncY2;
   }
-  var after = (new Date()).getTime();
-  var diff = after - before;
-  print("3d-cube;" + diff);
+  var diff = (new Date()).getTime() - before; print("3d-cube;" + diff); // JSCPOLLY
 
   Q.LastPx = NumPix;
 }
@@ -382,7 +378,4 @@ Testing = null;
 LoopTime = null;
 DisplArea = null;
 
-// Global Time after
-var after = (new Date()).getTime();
-var diff = after - before;
-print("3d-cube;" + diff);
+var diff = (new Date()).getTime() - before;print("3d-cube;" + diff); // JSCPOLLY

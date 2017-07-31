@@ -2,6 +2,8 @@
    http://shootout.alioth.debian.org/
    contributed by Isaac Gouy */
 
+var before = (new Date()).getTime(); // JSCPOLLY
+
 function TreeNode(left,right,item){
    this.left = left;
    this.right = right;
@@ -48,6 +50,8 @@ for ( var n = 4; n <= 16; n += 1 ) {
 
     ret += longLivedTree.itemCheck();
 }
+
+var diff = (new Date()).getTime() - before; print("access-binary-trees;" + diff); // JSCPOLLY
 
 var expected = -13;
 if (ret != expected)

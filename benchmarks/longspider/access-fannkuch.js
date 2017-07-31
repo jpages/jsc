@@ -2,6 +2,8 @@
    http://shootout.alioth.debian.org/
    contributed by Isaac Gouy */
 
+var before = (new Date()).getTime(); // JSCPOLLY
+
 function fannkuch(n) {
    var check = 0;
    var perm = Array(n);
@@ -10,8 +12,9 @@ function fannkuch(n) {
    var maxPerm = Array(n);
    var maxFlipsCount = 0;
    var m = n - 1;
-
+    
    for (var i = 0; i < n; i++) perm1[i] = i;
+    
    var r = n;
 
    while (true) {
@@ -63,6 +66,8 @@ function fannkuch(n) {
 
 var n = 10;
 var ret = fannkuch(n);
+
+var diff = (new Date()).getTime() - before; print("access-fannkuch;" + diff); // JSCPOLLY
 
 var expected = 38;
 if (ret != expected)

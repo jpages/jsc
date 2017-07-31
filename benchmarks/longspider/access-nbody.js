@@ -2,6 +2,8 @@
    http://shootout.alioth.debian.org/
    contributed by Isaac Gouy */
 
+var before = (new Date()).getTime(); // JSCPOLLY
+
 var PI = 3.141592653589793;
 var SOLAR_MASS = 4 * PI * PI;
 var DAYS_PER_YEAR = 365.24;
@@ -96,6 +98,7 @@ NBodySystem.prototype.advance = function(dt){
    var dx, dy, dz, distance, mag;
    var size = this.bodies.length;
 
+   var before = (new Date()).getTime(); // JSCPOLLY
    for (var i=0; i<size; i++) {
       var bodyi = this.bodies[i];
       for (var j=i+1; j<size; j++) {
@@ -123,6 +126,7 @@ NBodySystem.prototype.advance = function(dt){
       body.y += dt * body.vy;
       body.z += dt * body.vz;
    }
+   var diff = (new Date()).getTime() - before;print("access-nbody;" + diff); // JSCPOLLY
 }
 
 NBodySystem.prototype.energy = function(){
@@ -130,6 +134,7 @@ NBodySystem.prototype.energy = function(){
    var e = 0.0;
    var size = this.bodies.length;
 
+   var before = (new Date()).getTime(); // JSCPOLLY
    for (var i=0; i<size; i++) {
       var bodyi = this.bodies[i];
 
@@ -148,6 +153,7 @@ NBodySystem.prototype.energy = function(){
          e -= (bodyi.mass * bodyj.mass) / distance;
       }
    }
+   var diff = (new Date()).getTime() - before;print("access-nbody;" + diff); // JSCPOLLY
    return e;
 }
 
@@ -167,6 +173,8 @@ for ( var n = 3; n <= 12288; n *= 2 ) {
         ret += bodies.energy();
     })();
 }
+
+var diff = (new Date()).getTime() - before;print("access-nbody;" + diff); // JSCPOLLY
 
 var expected = -4.395717154909567;
 if (ret != expected)

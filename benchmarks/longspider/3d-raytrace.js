@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// Time before
+var date = new Date();
+var before = date.getTime();
+
 function createVector(x,y,z) {
     return new Array(x,y,z);
 }
@@ -109,11 +113,13 @@ function invertMatrix(self) {
     var tx = -self[3];
     var ty = -self[7];
     var tz = -self[11];
+    var before = (new Date()).getTime(); // JSCPOLLY
     for (h = 0; h < 3; h++) 
         for (v = 0; v < 3; v++) 
             temp[h + v * 4] = self[v + h * 4];
     for (i = 0; i < 11; i++)
         self[i] = temp[i];
+    var diff = (new Date()).getTime() - before; print("3d-raytrace;" + diff); // JSCPOLLY
     self[3] = tx * self[0] + ty * self[1] + tz * self[2];
     self[7] = tx * self[4] + ty * self[5] + tz * self[6];
     self[11] = tx * self[8] + ty * self[9] + tz * self[10];
@@ -389,12 +395,15 @@ function raytraceScene()
     
     var size = 30;
     var pixels = new Array();
+
+    var before = (new Date()).getTime(); // JSCPOLLY
     for (var y = 0; y < size; y++) {
         pixels[y] = new Array();
         for (var x = 0; x < size; x++) {
             pixels[y][x] = 0;
         }
     }
+    var diff = (new Date()).getTime() - before; print("3d-raytrace;" + diff); // JSCPOLLY
 
     var _camera = new Camera(createVector(-40, 40, 40), createVector(0, 0, 0), createVector(0, 1, 0));
     _camera.render(_scene, pixels, size, size);
@@ -447,4 +456,7 @@ for (var __i = 0; __i < 300; ++__i) {
         throw "Error: bad result: expected length " + expectedLength + " but got " + testOutput.length;
 }
 
-
+// Global Time after
+var after = (new Date()).getTime();
+var diff = after - before;
+print("3d-raytrace;" + diff);
