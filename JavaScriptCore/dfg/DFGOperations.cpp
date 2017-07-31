@@ -1360,6 +1360,8 @@ static void triggerFTLReplacementCompile(VM* vm, CodeBlock* codeBlock, JITCode* 
         return;
     }
 
+    // JSCPOLLY COMMENT
+    // Trigger FTL compilation for full function entry
     // We need to compile the code.
     compile(
         *vm, codeBlock->newReplacement(), codeBlock, FTLMode, UINT_MAX,
@@ -1480,6 +1482,9 @@ char* JIT_OPERATION triggerOSREntryNow(
     jitCode->reconstruct(
         exec, codeBlock, CodeOrigin(bytecodeIndex), streamIndex, mustHandleValues);
     CodeBlock* replacementCodeBlock = codeBlock->newReplacement();
+
+    // JSCPOLLY COMMENT
+    // Trigger FTL compilation for OSR entry
     CompilationResult forEntryResult = compile(
         *vm, replacementCodeBlock, codeBlock, FTLForOSREntryMode, bytecodeIndex,
         mustHandleValues, ToFTLForOSREntryDeferredCompilationCallback::create());
