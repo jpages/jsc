@@ -567,11 +567,15 @@ static void fixFunctionBasedOnStackMaps(
 
     ExceptionHandlerManager exceptionHandlerManager(state);
 
-    // Get offests of several stackmap records
+    // JSCPOLLY COMMENT
+    // Get offsets in stackmaps section of three special stackmap records:
+    //    captured, varargsSpillSlots and exceptionHandlingSpillSlot
     int localsOffset = offsetOfStackRegion(recordMap, state.capturedStackmapID) + graph.m_nextMachineLocal;
     int varargsSpillSlotsOffset = offsetOfStackRegion(recordMap, state.varargsSpillSlotsStackmapID);
     int jsCallThatMightThrowSpillOffset = offsetOfStackRegion(recordMap, state.exceptionHandlingSpillSlotStackmapID);
 
+    // JSCPOLLY COMMENT
+    // TODO Do something but what ?
     for (unsigned i = graph.m_inlineVariableData.size(); i--;) {
         InlineCallFrame* inlineCallFrame = graph.m_inlineVariableData[i].inlineCallFrame;
 
@@ -625,10 +629,16 @@ static void fixFunctionBasedOnStackMaps(
     }
 
 
+    // JSCPOLLY COMMENT
     // Iterate over orsDescriptors added when lowering DFG to FTl
-    // todo something, but what ? //TODO JSCPOLLY
+    // TODO Do something but what ?
     RELEASE_ASSERT(state.jitCode->osrExit.size() == 0);
     for (unsigned i = 0; i < state.jitCode->osrExitDescriptors.size(); i++) {
+
+        // JSCPOLLY COMMENT
+    	// Get the descriptor and check that at least one record is present in
+    	// the stackmaps section for the stackmapID associated with the descriptor.
+    	// In other words, check that it has not been optimized out
         OSRExitDescriptor& exitDescriptor = state.jitCode->osrExitDescriptors[i];
         auto iter = recordMap.find(exitDescriptor.m_stackmapID);
         if (iter == recordMap.end()) {
@@ -638,10 +648,17 @@ static void fixFunctionBasedOnStackMaps(
 
         for (unsigned j = exitDescriptor.m_values.size(); j--;)
             exitDescriptor.m_values[j] = exitDescriptor.m_values[j].withLocalsOffset(localsOffset);
+
         for (ExitTimeObjectMaterialization* materialization : exitDescriptor.m_materializations)
             materialization->accountForLocalsOffset(localsOffset);
 
+        // JSCPOLLY COMMENT
+        // Iterate over all the records of the stackmapID of the current OSR exit descriptor
         for (unsigned j = 0; j < iter->value.size(); j++) {
+
+
+            // JSCPOLLY COMMENT
+        	// Creates an OSRExit for the current record
             {
                 uint32_t stackmapRecordIndex = iter->value[j].index;
                 OSRExit exit(exitDescriptor, stackmapRecordIndex);
@@ -702,8 +719,11 @@ static void fixFunctionBasedOnStackMaps(
 
         codeBlock->clearExceptionHandlers();
 
+        // JSCPOLLY COMMENT
+    	// Iterates over all OSRExit created above
         for (unsigned i = 0; i < state.jitCode->osrExit.size(); ++i) {
-            OSRExitCompilationInfo& info = state.finalizer->osrExit[i];
+
+        	OSRExitCompilationInfo& info = state.finalizer->osrExit[i];
             OSRExit& exit = state.jitCode->osrExit[i];
 
             if (verboseCompilationEnabled())
@@ -1188,8 +1208,9 @@ void compile(State& state, Safepoint::Result& safepointResult)
             functionPasses = llvm->CreateFunctionPassManagerForModule(module);
 
             // BEGIN JSCPOLLY
-            if (Options::jscpolly()) {
+            if (state.withPolly) {
 				// Intialize LLVM passes used by Polly
+            	std::cout << "REGISTERING POLLY\n";
 				passRegistry = llvm->GetGlobalPassRegistry();
 				llvm->initializePollyPasses(*reinterpret_cast<llvm::PassRegistry*>(passRegistry));
             }
@@ -1220,8 +1241,8 @@ void compile(State& state, Safepoint::Result& safepointResult)
                 llvm->AddLowerSwitchPass(modulePasses);
 
 			// JSCPOLLY BEGIN
-            if (Options::jscpolly()) {
-				llvm->registerPollyPasses(*reinterpret_cast<llvm::legacy::PassManager*>(modulePasses));
+            if (state.withPolly) {
+                llvm->registerPollyPasses(*reinterpret_cast<llvm::legacy::PassManager*>(modulePasses));
             }
 			// JSCPOLLY END
 
@@ -1270,6 +1291,8 @@ void compile(State& state, Safepoint::Result& safepointResult)
     if (state.allocationFailed)
         return;
 
+    // JSCPOLLY COMMENT
+    // Dumps text and data sections
     if (shouldDumpDisassembly()) {
         for (unsigned i = 0; i < state.jitCode->handles().size(); ++i) {
             ExecutableMemoryHandle* handle = state.jitCode->handles()[i].get();
@@ -1292,6 +1315,8 @@ void compile(State& state, Safepoint::Result& safepointResult)
         }
     }
 
+    // JSCPOLLY COMMENT
+    // Dumps unwind section
     std::unique_ptr<RegisterAtOffsetList> registerOffsets = parseUnwindInfo(
         state.unwindDataSection, state.unwindDataSectionSize,
         state.generatedFunction);
@@ -1301,9 +1326,12 @@ void compile(State& state, Safepoint::Result& safepointResult)
     }
     state.graph.m_codeBlock->setCalleeSaveRegisters(WTF::move(registerOffsets));
 
+    // JSCPOLLY COMMENT
     // We need to do something with stackmaps
     if (state.stackmapsSection && state.stackmapsSection->size()) {
 
+        // JSCPOLLY COMMENT
+        // Dumps stackmap section binary
     	if (shouldDumpDisassembly()) {
             dataLog(
                 "Generated LLVM stackmaps section for ",
@@ -1312,22 +1340,34 @@ void compile(State& state, Safepoint::Result& safepointResult)
             dumpDataSection(state.stackmapsSection.get(), "    ");
         }
 
+
+        // JSCPOLLY COMMENT
+        // Parse stackmap section to create structured representation of it
         RefPtr<DataView> stackmapsData = DataView::create(
             ArrayBuffer::create(state.stackmapsSection->base(), state.stackmapsSection->size()));
         state.jitCode->stackmaps.parse(stackmapsData.get());
 
+        // JSCPOLLY COMMENT
+        // Dumps structured view of stackmaps section
         if (shouldDumpDisassembly()) {
             dataLog("    Structured data:\n");
             state.jitCode->stackmaps.dumpMultiline(WTF::dataFile(), "        ");
         }
 
+        // JSCPOLLY COMMENT
+        // Computes map between stackmap IDs and associated records
         StackMaps::RecordMap recordMap = state.jitCode->stackmaps.computeRecordMap();
+
+        // JSCPOLLY COMMENT
+        // Patch the code
         fixFunctionBasedOnStackMaps(
             state, state.graph.m_codeBlock, state.jitCode.get(), state.generatedFunction,
             recordMap);
         if (state.allocationFailed)
             return;
 
+        // JSCPOLLY COMMENT
+        // Dump text sections (can we have more than one text section ??)
         if (shouldDumpDisassembly() || Options::asyncDisassembly()) {
             for (unsigned i = 0; i < state.jitCode->handles().size(); ++i) {
                 if (state.codeSectionNames[i] != SECTION_NAME("text"))

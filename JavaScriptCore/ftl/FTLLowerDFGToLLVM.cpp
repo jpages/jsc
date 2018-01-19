@@ -233,7 +233,7 @@ public:
             m_out.int32Zero, capturedAlloca);
 
         // BEGIN JSCPOLLY
-        if (Options::jscpollyDumpLLVMRT()) {
+        if (m_ftlState.withPolly && Options::jscpollyDumpLLVMRT()) {
         	LValue stringAlloca = m_out.alloca(arrayType(m_out.int8, name.length() + 1));
         	set_string(stringAlloca, name.data());
         	LValue indices[2];
@@ -398,7 +398,17 @@ public:
             Node* node = m_graph.m_arguments[i];
             VirtualRegister operand = virtualRegisterForArgument(i);
 
-            LValue jsValue = m_out.load64(addressFor(operand));
+            // BEGIN JSCPOLLY
+            LValue jsValue;
+            if (m_ftlState.withPolly && m_graph.m_argumentFormats[i] == FlushedInt32) {
+            	jsValue = m_out.load32(addressFor(operand));
+            } else {
+            	jsValue = m_out.load64(addressFor(operand));
+            }
+            // END JSCPOLLY
+
+            // Original code
+			// LValue jsValue = m_out.load32(addressFor(operand));
 
             if (node) {
                 DFG_ASSERT(m_graph, node, operand == node->stackAccessData()->machineLocal);
@@ -1452,6 +1462,7 @@ private:
 
         DFG_ASSERT(m_graph, m_node, isConcrete(data->format));
         DFG_ASSERT(m_graph, m_node, data->format != FlushedDouble); // This just happens to not arise for GetStacks, right now. It would be trivial to support.
+
 
         if (isInt32Speculation(value.m_type))
             setInt32(m_out.load32(payloadFor(data->machineLocal)));
@@ -2733,7 +2744,7 @@ private:
                 m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
 
             // BEGIN JSCPOLLY
-            if (Options::jscpolly()) {
+            if (m_ftlState.withPolly) {
 				// Do the intoptr instruction in the current block
 				TypedPointer pointer = basePtr(heap, storage, index, m_node->child2());
 
@@ -3028,7 +3039,7 @@ private:
 
     void compileGetMyArgumentByVal()
     {
-        InlineCallFrame* inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame;
+    	InlineCallFrame* inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame;
 
         LValue index = lowInt32(m_node->child2());
 
@@ -3120,7 +3131,7 @@ private:
                     FTL_TYPE_CHECK(jsValueValue(value), child3, SpecInt32, isNotInt32(value));
 
                 // BEGIN JSCPOLLY
-                if (Options::jscpolly()) {
+                if (m_ftlState.withPolly) {
 					IndexedAbstractHeap& heap = m_node->arrayMode().type() == Array::Int32 ?
 							m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
 
@@ -5126,6 +5137,7 @@ private:
     }
 
     void compileBranch()
+
     {
         m_out.branch(
             boolify(m_node->child1()),
@@ -9310,7 +9322,7 @@ private:
 #else // FTL_USES_B3
 
         // BEGIN JSCPOLLY
-        if (!Options::jscpollyUseStackmaps()) {
+        if (m_ftlState.withPolly && !Options::jscpollyUseStackmaps()) {
         	return;
         }
         // END JSCPOLLY

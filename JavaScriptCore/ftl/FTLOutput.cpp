@@ -172,12 +172,12 @@ void Output::branch(LValue condition, LBasicBlock taken, Weight takenWeight, LBa
     
     double total = takenWeight.value() + notTakenWeight.value();
     
-    setMetadata(
-        branch, profKind,
-        mdNode(
-            m_context, branchWeights,
-            constInt32(takenWeight.scaleToTotal(total)),
-            constInt32(notTakenWeight.scaleToTotal(total))));
+//    setMetadata(
+//        branch, profKind,
+//        mdNode(
+//            m_context, branchWeights,
+//            constInt32(takenWeight.scaleToTotal(total)),
+//            constInt32(notTakenWeight.scaleToTotal(total))));
 }
 
 void Output::check(LValue condition, WeightedTarget taken, Weight notTakenWeight)

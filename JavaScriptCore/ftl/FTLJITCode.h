@@ -94,8 +94,15 @@ public:
     
     DFG::CommonData common;
     SegmentedVector<OSRExit, 8> osrExit;
+
+    // JSCPOLLY COMMENT
+    // OSR exit descriptors added when lowering DFG to FTL
     SegmentedVector<OSRExitDescriptor, 8> osrExitDescriptors;
+
+    // JSCPOLLY COMMENT
+    // Structured view of the stackmaps section
     StackMaps stackmaps;
+
     Vector<std::unique_ptr<LazySlowPath>> lazySlowPaths;
     
 private:

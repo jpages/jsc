@@ -117,7 +117,17 @@ private:
     bool isStillValid();
     void reallyAdd(CommonData*);
 
+    // JSCPOLLY COMMENT
+    // time before compiling LLVM IR but after lowering DFG to FTL
     double m_timeBeforeFTL;
+
+    // JSCPOLLY COMMENT
+    // time before compiling lowering LLVM IR with polly but after compiling without polly
+    double m_timeBeforeLoweringFTLPolly;
+
+    // JSCPOLLY COMMENT
+    // time before compiling LLVM IR with polly
+    double m_timeBeforeFTLPolly;
 };
 
 #else // ENABLE(DFG_JIT)

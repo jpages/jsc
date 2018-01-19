@@ -4,7 +4,8 @@ function test(p)
     for (var i = 0; i < N; i++) {
 	for (var j = 0; j < N; j++) {
 	    var idx = i*N+j
-	    p[idx] += 666666
+	    for (var z = 0; z < N*N; z++)
+		p[idx] += 1
 	}
 //        if ((i + 1) % (N / 5) == 0) {
 //	    print("test " +  test_cpt + " is at i = " + i)
@@ -13,7 +14,7 @@ function test(p)
 //   test_cpt =  test_cpt + 1
 }
 
-var N = 10000
+var N = 100000
 var test_cpt = 0
 var flat_pixels = [];
 for (var i = 0; i < N; i++) {

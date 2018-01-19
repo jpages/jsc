@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DFGPlan.h"
 
+#include <iostream>
+
 #if ENABLE(DFG_JIT)
 
 #include "DFGArgumentsEliminationPhase.h"
@@ -100,6 +102,11 @@ double totalDFGCompileTime;
 double totalFTLCompileTime;
 double totalFTLDFGCompileTime;
 double totalFTLLLVMCompileTime;
+
+// JSCPOLLY BEGIN
+double totalFTLDFGPollyCompileTime;
+double totalFTLLLVMPollyCompileTime;
+// JSCPOLLY END
 
 void dumpAndVerifyGraph(Graph& graph, const char* text, bool forceDump = false)
 {
@@ -196,7 +203,17 @@ void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadDat
         if (isFTL(mode)) {
             totalFTLCompileTime += after - before;
             totalFTLDFGCompileTime += m_timeBeforeFTL - before;
-            totalFTLLLVMCompileTime += after - m_timeBeforeFTL;
+
+            // JSCPOLLY BEGIN
+            if (Options::jscpolly()) {
+            	totalFTLLLVMCompileTime += m_timeBeforeLoweringFTLPolly - m_timeBeforeFTL;
+                totalFTLDFGPollyCompileTime += m_timeBeforeFTLPolly - m_timeBeforeLoweringFTLPolly;
+            	totalFTLLLVMPollyCompileTime += after - m_timeBeforeFTLPolly;
+            } else {
+            	totalFTLLLVMCompileTime += after - m_timeBeforeFTL;
+            }
+            // JSCPOLLY END
+
         } else
             totalDFGCompileTime += after - before;
     }
@@ -473,7 +490,10 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
             return FailPath;
         }
 
-        FTL::State state(dfg);
+        // JSCPOLLY COMMENT
+        // FTL compilation really starts here
+
+        FTL::State state(Options::jscpolly(), dfg);
         FTL::lowerDFGToLLVM(state);
         
         if (computeCompileTimes())
@@ -512,6 +532,54 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
             return FTLPath;
         }
         
+//        // JSCPOLLY BEGIN
+//        // The following compile another version with polly
+//        if (Options::jscpolly()) {
+//
+//			if (computeCompileTimes())
+//				m_timeBeforeLoweringFTLPolly = monotonicallyIncreasingTimeMS();
+//
+//			FTL::State statePolly(true, dfg);
+//			FTL::lowerDFGToLLVM(statePolly);
+//
+//			if (computeCompileTimes())
+//				m_timeBeforeFTLPolly = monotonicallyIncreasingTimeMS();
+//
+//			if (Options::llvmAlwaysFailsBeforeCompile()) {
+//				FTL::fail(statePolly);
+//				return FTLPath;
+//			}
+//
+//			FTL::compile(statePolly, safepointResult);
+//			if (safepointResult.didGetCancelled())
+//				return CancelPath;
+//
+//			if (Options::llvmAlwaysFailsBeforeLink()) {
+//				FTL::fail(statePolly);
+//				return FTLPath;
+//			}
+//
+//			if (statePolly.allocationFailed) {
+//				FTL::fail(statePolly);
+//				return FTLPath;
+//			}
+//
+//#if !FTL_USES_B3
+//			if (statePolly.jitCode->stackmaps.stackSize() > Options::llvmMaxStackSize()) {
+//				FTL::fail(statePolly);
+//				return FTLPath;
+//			}
+//#endif
+//
+//			FTL::link(statePolly);
+//
+//			if (statePolly.allocationFailed) {
+//				FTL::fail(statePolly);
+//				return FTLPath;
+//			}
+//        }
+//        // JSCPOLLY END
+
         return FTLPath;
 #else
         RELEASE_ASSERT_NOT_REACHED();
@@ -682,9 +750,11 @@ HashMap<CString, double> Plan::compileTimeStats()
     if (Options::reportTotalCompileTimes()) {
         result.add("Compile Time", totalDFGCompileTime + totalFTLCompileTime);
         result.add("DFG Compile Time", totalDFGCompileTime);
-        result.add("FTL Compile Time", totalFTLCompileTime);
-        result.add("FTL (DFG) Compile Time", totalFTLDFGCompileTime);
-        result.add("FTL (LLVM) Compile Time", totalFTLLLVMCompileTime);
+        result.add("FTL1 Compile Time", totalFTLCompileTime);
+        result.add("FTL2 DFG to LLVM", totalFTLDFGCompileTime);
+        result.add("FTL3 LLVM to BIN", totalFTLLLVMCompileTime);
+        result.add("FTL4 DFG to LLVM", totalFTLDFGPollyCompileTime);
+        result.add("FTL5 LLVM to BIN", totalFTLLLVMPollyCompileTime);
     }
     return result;
 }

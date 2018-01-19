@@ -59,9 +59,13 @@ class State {
     WTF_MAKE_NONCOPYABLE(State);
     
 public:
-    State(DFG::Graph& graph);
+    State(bool withPolly, DFG::Graph& graph);
     ~State();
     
+    // JSCPOLLY BEGIN
+    bool withPolly;
+    // JSCPOLLY END
+
     // None of these things is owned by State. It is the responsibility of
     // FTL phases to properly manage the lifecycle of the module and function.
     DFG::Graph& graph;
@@ -99,7 +103,12 @@ public:
     Vector<JSCall> jsCalls;
     Vector<JSCallVarargs> jsCallVarargses;
     Vector<JSTailCall> jsTailCalls;
+
+    // JSCPOLLY COMMENT
+    // Names of code sections. Each entry in this vector is associated
+    // with an entry at the same index in the jitcode.handles vector
     Vector<CString> codeSectionNames;
+
     Vector<CString> dataSectionNames;
     void* unwindDataSection;
     size_t unwindDataSectionSize;
