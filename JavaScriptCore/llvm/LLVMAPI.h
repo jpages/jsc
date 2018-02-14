@@ -50,6 +50,7 @@ struct LLVMAPI {
     LLVMPassRegistryRef (*GetGlobalPassRegistry) (void);
 
     void (*initializePollyPasses) (llvm::PassRegistry &Registry);
+    void (*initializePollyPassesJSCPolly) (bool tiling);
     void (*registerPollyPasses) (llvm::legacy::PassManagerBase &PM);
     void (*registerCanonicalicationPasses) (llvm::legacy::PassManagerBase &PM);
     // JSCPOLLY END

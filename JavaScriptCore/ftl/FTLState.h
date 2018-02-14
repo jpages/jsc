@@ -59,11 +59,12 @@ class State {
     WTF_MAKE_NONCOPYABLE(State);
     
 public:
-    State(bool withPolly, DFG::Graph& graph);
+    State(bool withPolly, bool withPollyNo, DFG::Graph& graph);
     ~State();
     
     // JSCPOLLY BEGIN
     bool withPolly;
+    bool withPollyNo;
     // JSCPOLLY END
 
     // None of these things is owned by State. It is the responsibility of

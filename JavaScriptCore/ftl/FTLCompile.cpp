@@ -49,6 +49,7 @@
 #include "ScratchRegisterAllocator.h"
 
 #include <iostream>
+#include <sys/time.h>
 
 namespace JSC { namespace FTL {
 
@@ -1210,9 +1211,10 @@ void compile(State& state, Safepoint::Result& safepointResult)
             // BEGIN JSCPOLLY
             if (state.withPolly) {
 				// Intialize LLVM passes used by Polly
-            	std::cout << "REGISTERING POLLY\n";
 				passRegistry = llvm->GetGlobalPassRegistry();
 				llvm->initializePollyPasses(*reinterpret_cast<llvm::PassRegistry*>(passRegistry));
+				llvm->initializePollyPassesJSCPolly(Options::jscpollyTiling());
+				std::cout << "init polly passes with tiling = " << Options::jscpollyTiling() << std::endl;
             }
             // END JSCPOLLY
 
@@ -1241,12 +1243,22 @@ void compile(State& state, Safepoint::Result& safepointResult)
                 llvm->AddLowerSwitchPass(modulePasses);
 
 			// JSCPOLLY BEGIN
-            if (state.withPolly) {
+            if (state.withPolly && !state.withPollyNo) {
+            	std::cout << "running polly passes\n";
                 llvm->registerPollyPasses(*reinterpret_cast<llvm::legacy::PassManager*>(modulePasses));
             }
 			// JSCPOLLY END
 
+            struct timeval start, end;
+            long secs_used,micros_used;
+            gettimeofday(&start, NULL);
+
             llvm->RunPassManager(modulePasses, module);
+
+            gettimeofday(&end, NULL);
+            secs_used=(end.tv_sec - start.tv_sec); //avoid overflow by subtracting first
+            micros_used= ((secs_used*1000000) + end.tv_usec) - (start.tv_usec);
+            std::cout << "COMPILE: " << (micros_used/1000) << " milliseconds\n";
 
         } else {
             LLVMPassManagerBuilderRef passBuilder = llvm->PassManagerBuilderCreate();

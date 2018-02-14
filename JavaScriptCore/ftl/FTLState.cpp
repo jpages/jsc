@@ -40,8 +40,9 @@ namespace JSC { namespace FTL {
 
 using namespace DFG;
 
-State::State(bool withPolly, Graph& graph)
+State::State(bool withPolly, bool withPollyNo, Graph& graph)
     : withPolly(withPolly)
+	, withPollyNo(withPollyNo)
     , graph(graph)
     , context(llvm->ContextCreate())
     , module(0)

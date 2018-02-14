@@ -493,7 +493,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         // JSCPOLLY COMMENT
         // FTL compilation really starts here
 
-        FTL::State state(Options::jscpolly(), dfg);
+        FTL::State state(Options::jscpolly(), Options::jscpollyNo(), dfg);
         FTL::lowerDFGToLLVM(state);
         
         if (computeCompileTimes())

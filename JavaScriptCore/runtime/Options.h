@@ -110,6 +110,8 @@ typedef const char* optionString;
     v(bool, useRegExpJIT, true, "allows the RegExp JIT to be used if true\n") \
     \
     v(bool, jscpolly, false, "enable polly in LLVM passes\n") \
+    v(bool, jscpollyNo, false, "enable polly in LLVM passes but only registration\n") \
+    v(bool, jscpollyTiling, true, "enable first level tilling in polly\n") \
     v(bool, jscpollyDumpLLVMRT, false, "dumps llvm runtime behavior\n") \
     v(bool, jscpollyUseStackmaps, true, "enable/disable generation of stackmaps in LLVM code\n") \
 	v(bool, jscpollyDumpOSRExit, false, "dump each OSR exit from LLVM code\n") \

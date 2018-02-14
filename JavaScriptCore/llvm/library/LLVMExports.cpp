@@ -139,6 +139,7 @@ extern "C" JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(
 	// Polly passes
 	result->GetGlobalPassRegistry = LLVMGetGlobalPassRegistry;
 	result->initializePollyPasses = polly::initializePollyPasses;
+	result->initializePollyPassesJSCPolly = polly::initializePollyPassesJSCPolly;
 	result->registerPollyPasses = polly::registerPollyPasses;
 	result->registerCanonicalicationPasses = polly::registerCanonicalicationPasses;
     // JSCPOLLY END
